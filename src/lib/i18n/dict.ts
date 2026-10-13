@@ -245,6 +245,7 @@ export const dict: Record<string, Localised> = {
 
   /* ---------- part ---------- */
   "part.eyebrow": { en: "An initiative by", bm: "Sebuah inisiatif oleh" },
+  "part.explore": { en: "Click to explore", bm: "Klik untuk meneroka" },
 
   /* ---------- path ---------- */
   "path.eyebrow": { en: "Learning pathways", bm: "Laluan pembelajaran" },
@@ -328,6 +329,8 @@ export const dict: Record<string, Localised> = {
   "ap.w2t": { en: "Support is scattered", bm: "Sokongan yang berselerak" },
   "ap.w3t": { en: "A heavier load", bm: "Kekangan yang lebih berat" },
   "nav.home": { en: "Strivers' Hub home", bm: "Laman utama Strivers' Hub" },
+  "nav.by": { en: "Powered by", bm: "Dikuasakan oleh" },
+  "as.loading": { en: "Preparing your assessment", bm: "Menyediakan penilaian anda" },
   "nav.menu": { en: "Menu", bm: "Menu" },
   "hero.imgAlt": { en: "Women entrepreneurs collaborating over a laptop", bm: "Usahawanita bekerjasama di hadapan komputer riba" },
   "hero.tag": { en: "businesses to reach", bm: "perniagaan disasarkan" },
@@ -450,6 +453,21 @@ export const dict: Record<string, Localised> = {
   "hv.card.perfect": { en: "Perfect hive", bm: "Sarang sempurna" },
   "hv.card.foot": { en: "Build yours at", bm: "Bina milik anda di" },
   "hv.card.alt": { en: "Your hive card: {w}", bm: "Kad sarang anda: {w}" },
+  /* ---- the helper character ---- */
+  "hp.h": { en: "Hi! Got five minutes?", bm: "Hai! Ada lima minit?" },
+  "hp.p": { en: "Find out where your business stands, and what to learn next.", bm: "Ketahui tahap perniagaan anda, dan apa yang perlu dipelajari seterusnya." },
+  "hp.cta": { en: "Take the assessment", bm: "Mula penilaian" },
+  "hp.backH": { en: "Welcome back!", bm: "Selamat kembali!" },
+  "hp.backP": { en: "Your result is saved. Want to look at it again?", bm: "Keputusan anda telah disimpan. Mahu melihatnya semula?" },
+  "hp.backCta": { en: "See my result", bm: "Lihat keputusan saya" },
+  "hp.moodQ": { en: "How is business this week?", bm: "Bagaimana perniagaan anda minggu ini?" },
+  "hp.m1": { en: "Tough", bm: "Mencabar" },
+  "hp.m2": { en: "Steady", bm: "Stabil" },
+  "hp.m3": { en: "Good", bm: "Baik" },
+  "hp.thanks": { en: "Thank you! It helps us plan what to offer next.", bm: "Terima kasih! Ia membantu kami merancang apa yang ditawarkan seterusnya." },
+  "hp.later": { en: "Not now", bm: "Bukan sekarang" },
+  "hp.close": { en: "Close", bm: "Tutup" },
+  "hp.open": { en: "Open the Strivers' Hub helper", bm: "Buka pembantu Strivers' Hub" },
 };
 
 export type StringKey = keyof typeof dict;

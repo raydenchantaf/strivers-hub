@@ -32,7 +32,19 @@ export function PartnerBand() {
         </span>
         <div className="partners" style={{ marginTop: 28 }}>
           {PARTNERS.map((p) => (
-            <a key={p.name} href={p.href} target="_blank" rel="noopener noreferrer">
+            <a
+              key={p.name}
+              href={p.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-track="partner"
+              data-label={p.name}
+            >
+              {/* the link already reads as the partner's name, from the logo's
+                  alt; the bubble is for sighted pointer and keyboard users */}
+              <span className="pt-tip" aria-hidden="true">
+                {t('part.explore')} <b>{p.name}</b> <span className="pt-arrow">&#8599;</span>
+              </span>
               <Image
                 src={p.src}
                 alt={p.name}

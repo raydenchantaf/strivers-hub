@@ -89,9 +89,19 @@ export function Nav() {
     <>
       <nav className="nav">
         <div className="shell nav-in">
-          <Link className="nav-logo" href="/" aria-label={t('nav.home')}>
-            <Image src="/img/logo.webp" alt="Strivers' Hub" width={316} height={94} priority />
-          </Link>
+          {/* The platform's own mark leads; the builder's credit sits under the
+              wordmark, small enough that it never competes with it. Not a
+              link: two anchors in one lock-up would be two tab stops for
+              one logo, and the credit has nowhere useful to go. */}
+          <div className="nav-brand">
+            <Link className="nav-logo" href="/" aria-label={t('nav.home')}>
+              <Image src="/img/logo.webp" alt="Strivers' Hub" width={316} height={94} priority />
+            </Link>
+            <span className="nav-by">
+              <span>{t('nav.by')}</span>
+              <Image src="/img/unbound.webp" alt="UnBound" width={480} height={117} />
+            </span>
+          </div>
 
           <div className="nav-links">
             {LINKS.map((l) => (

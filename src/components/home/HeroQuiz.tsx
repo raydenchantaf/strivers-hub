@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useLang } from '@/components/LangProvider';
 import { questions } from '@/lib/assessment/questions';
 import { clearOutcome } from '@/lib/assessment/outcome';
+import { track } from '@/lib/analytics/client';
 
 /** The first three real questions, not a teaser. */
 const HERO_QUESTIONS = ['q1', 'q3a', 'q3c'] as const;
@@ -28,6 +29,7 @@ export function HeroQuiz() {
   const pct = Math.round((step / HERO_QUESTIONS.length) * 100);
 
   function choose(optionId: string) {
+    if (step === 0 && !answers[id]) track('quiz', { s: 'hero' });
     setAnswers((a) => ({ ...a, [id]: optionId }));
     // let the tick land before moving on
     setTimeout(() => setStep((s) => s + 1), 190);

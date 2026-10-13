@@ -98,9 +98,11 @@ export default async function RootLayout({
               src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}
               strategy="afterInteractive"
             />
+            {/* not inside a frame: the heatmap on /insights previews pages in one,
+                and those previews are not visits */}
             <Script id="ga" strategy="afterInteractive">
               {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
-gtag('js',new Date());gtag('config','${ga}',{anonymize_ip:true});`}
+gtag('js',new Date());if(window.top===window.self){gtag('config','${ga}',{anonymize_ip:true});}`}
             </Script>
           </>
         ) : null}

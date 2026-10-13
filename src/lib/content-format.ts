@@ -106,6 +106,8 @@ export interface CardView {
     /** Uncropped, so an article can render the image at its own proportions. */
     lead: string;
     alt: string;
+    /** A blurred thumbnail for the space around a picture shown whole. */
+    blur: string;
     /** Natural size of the source, used to reserve space and avoid reflow. */
     w: number;
     h: number;

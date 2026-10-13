@@ -3,6 +3,7 @@
 import { HeaderField } from '@/components/HeaderField';
 import { useLang } from '@/components/LangProvider';
 import { Reveal } from '@/components/Reveal';
+import { AssessLoader } from '@/components/assessment/AssessLoader';
 import { AssessmentTool } from '@/components/assessment/AssessmentTool';
 import type { Band } from '@/lib/assessment/types';
 
@@ -24,6 +25,7 @@ export function AssessmentView({ bands }: { bands: Band[] }) {
   const { t } = useLang();
   return (
     <>
+    <AssessLoader />
     <header className="as-hero phead" style={{ paddingBottom: 'clamp(56px,6.5vw,92px)' }}>
       <HeaderField />
       <div className="shell">

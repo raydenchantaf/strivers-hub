@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useLang } from '../LangProvider';
 import { Reveal } from '../Reveal';
 import { HEX, HEX_ROWS, HEX_ROWS_S, type HexRow, type HexSeg } from './hexlayout';
+import { track } from '@/lib/analytics/client';
 
 /**
  * Platform vocabulary set in the silhouette of the Strivers' Hub mark.
@@ -170,6 +171,42 @@ export function WordHex() {
       field.removeEventListener('pointerleave', onLeave);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  /* "Find your field" interest, for the insights page. A word counts when the
+     pointer rests on it for most of a second - long enough that it was read,
+     not just crossed on the way somewhere else - and once per word per visit.
+     Pointer devices only: on a phone these words are not interactive. */
+  useEffect(() => {
+    const field = ref.current;
+    if (!field || !window.matchMedia('(hover: hover)').matches) return;
+    const counted = new Set<string>();
+    let timer = 0;
+    let over: HTMLElement | null = null;
+    const onOver = (e: PointerEvent) => {
+      const w = (e.target as Element | null)?.closest<HTMLElement>('.w') ?? null;
+      if (w === over) return;
+      window.clearTimeout(timer);
+      over = w;
+      if (!w) return;
+      timer = window.setTimeout(() => {
+        const word = (w.textContent ?? '').trim();
+        if (!word || counted.has(word)) return;
+        counted.add(word);
+        track('field', { src: 'field', w: word });
+      }, 900);
+    };
+    const onOut = () => {
+      window.clearTimeout(timer);
+      over = null;
+    };
+    field.addEventListener('pointerover', onOver);
+    field.addEventListener('pointerleave', onOut);
+    return () => {
+      window.clearTimeout(timer);
+      field.removeEventListener('pointerover', onOver);
+      field.removeEventListener('pointerleave', onOut);
     };
   }, []);
 

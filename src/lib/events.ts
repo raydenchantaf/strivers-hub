@@ -1,7 +1,7 @@
 import 'server-only';
 import { groq } from 'next-sanity';
 import { sanityFetch } from '@/sanity/client';
-import { dimensionsOf, urlFor, type SanityImage } from '@/sanity/image';
+import { blurFor, dimensionsOf, urlFor, type SanityImage } from '@/sanity/image';
 import type { PortableTextBlock } from '@portabletext/types';
 
 /**
@@ -29,7 +29,7 @@ export type EventDoc = {
   capacity: number | null;
   registrationUrl: string | null;
   categories: { en: string; bm: string }[];
-  img: { card: string; lead: string; alt: string; w: number; h: number } | null;
+  img: { card: string; lead: string; blur: string; alt: string; w: number; h: number } | null;
   featured: boolean;
 };
 
@@ -77,8 +77,9 @@ function shape(r: Row): EventDoc {
     categories: ((r.categories as { en: string; bm: string }[] | undefined) ?? []).filter(Boolean),
     img: image
       ? {
-          card: urlFor(image, 720, 405),
+          card: urlFor(image, 720),
           lead: urlFor(image, 1440),
+          blur: blurFor(image),
           alt: image.alt ?? '',
           w: dims?.width ?? 1440,
           h: dims?.height ?? 810,

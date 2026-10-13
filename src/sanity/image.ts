@@ -14,6 +14,15 @@ export function urlFor(source: Image, width: number, height?: number) {
   return b.url();
 }
 
+/**
+ * A tiny, server-blurred copy of an image, used as the backdrop behind a
+ * picture shown whole inside a fixed frame. Sanity does the blur on its CDN,
+ * so it costs the phone one ~1 KB request and no filter work at all.
+ */
+export function blurFor(source: Image) {
+  return builder.image(source).width(64).blur(40).auto('format').quality(50).url();
+}
+
 /** srcSet for a fluid image, capped at the widest box we ever render it in. */
 export function srcSetFor(source: Image, widths: number[], ratio?: number) {
   return widths

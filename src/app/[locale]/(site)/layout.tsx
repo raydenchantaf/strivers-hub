@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { LangProvider } from '@/components/LangProvider';
 import { Footer, PartnerBand } from '@/components/Footer';
+import { Helper } from '@/components/Helper';
+import { Analytics } from '@/components/Analytics';
 import { IconSprite } from '@/components/Icons';
 import { Nav } from '@/components/Nav';
 import { isLocale } from '@/lib/i18n/types';
@@ -37,6 +39,8 @@ export default async function SiteLayout({
       <main id="main">{children}</main>
       <PartnerBand />
       <Footer />
+      <Helper />
+      <Analytics />
     </LangProvider>
   );
 }

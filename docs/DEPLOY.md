@@ -20,6 +20,8 @@ the host for production.
 | `AUTH_SECRET` | yes for accounts | Session signing key, see below |
 | `NEXT_PUBLIC_SITE_URL` | yes | `https://www.strivershub.com` — used for canonicals, sitemap and Open Graph |
 | `NEXT_PUBLIC_GA_ID` | no | Leave blank and no analytics script is loaded at all |
+| `DATABASE_URL` | for analytics | Postgres (Neon). Holds the first-party analytics table, created on first use. Blank: nothing is recorded. |
+| `INSIGHTS_PASSWORD` | for `/insights` | Password for the team's analytics dashboard. Blank: the dashboard stays closed. |
 | `REVALIDATE_SECRET` | no | Shared secret for the Sanity webhook |
 | `RESEND_API_KEY` | no | Turns password-reset delivery on. Without it the reset still works and the message goes to the server log. |
 | `MAIL_FROM` | with Resend | e.g. `Strivers' Hub <no-reply@strivershub.com>` |
@@ -58,6 +60,8 @@ vercel link
 vercel env add SANITY_API_WRITE_TOKEN production
 vercel env add AUTH_SECRET production
 vercel env add NEXT_PUBLIC_SITE_URL production
+vercel env add DATABASE_URL production
+vercel env add INSIGHTS_PASSWORD production
 vercel --prod
 ```
 

@@ -18,6 +18,7 @@ import { SaveResultDialog } from './SaveResultDialog';
 import { ProgressRing } from './ProgressRing';
 import { QuestionView } from './QuestionView';
 import { ResultView } from './ResultView';
+import { track } from '@/lib/analytics/client';
 
 const PROGRESS_KEY = 'sh_progress';
 
@@ -196,6 +197,16 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
   const value = answers[currentId];
   const otherText = otherTexts[currentId] ?? '';
   const canAdvance = q ? isAnswered(q, value, otherText, fieldValues) : false;
+
+  /* which of the five sections she has reached: where the insights page sees
+     people stop part-way through */
+  const lastSection = useRef<string | null>(null);
+  const section = phase === 'quiz' ? q?.section : undefined;
+  useEffect(() => {
+    if (!section || lastSection.current === section) return;
+    lastSection.current = section;
+    track('quiz', { s: 'sec', n: section });
+  }, [section]);
   const progress = useMemo(() => progressOf(history, currentId), [history, currentId]);
   const isLast = q?.next === '[END]';
 
@@ -260,6 +271,8 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
        account. Gating on the id meant that on any environment without a write
        token the prompt silently never appeared. */
     setPromptMode(alreadySaved ? null : 'gate');
+    track('quiz', { s: 'done', band: band.key.en, score });
+    if (!alreadySaved) track('quiz', { s: 'offer' });
     try {
       sessionStorage.removeItem(PROGRESS_KEY);
     } catch {
@@ -340,6 +353,7 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
     }
     clearOutcome();
     setPhase('quiz');
+    track('quiz', { s: 'retake' });
     scrollToPanel();
   }
 
@@ -421,6 +435,7 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
               disabled={!agreed}
               onClick={() => {
                 setPhase('quiz');
+                track('quiz', { s: 'start' });
                 scrollToPanel();
               }}
             >

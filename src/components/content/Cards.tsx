@@ -3,16 +3,17 @@
 import { L as Link } from '@/components/L';
 import { useLang } from '@/components/LangProvider';
 import { dateParts, formatDate, type CardView } from '@/lib/content-format';
+import { FitImg } from './FitImg';
 
 /* The editorial index row used on Resources. Rules and generous leading
    rather than a wall of identical cards: the title is the object you scan. */
 export function IndexRow({ item }: { item: CardView }) {
   const { p, lang } = useLang();
   return (
-    <Link className="ix" href={item.href}>
-      <div className="ix-img">
+    <Link className="ix" href={item.href} data-cat={item.categories[0]?.en ?? ''} data-title={item.title.en}>
+      <div className="ix-img fit">
         {item.img.thumb ? (
-          <img src={item.img.thumb} alt={item.img.alt} loading="lazy" width={320} height={200} />
+          <FitImg src={item.img.thumb} blur={item.img.blur} alt={item.img.alt} width={320} height={200} />
         ) : null}
       </div>
       <div>
@@ -32,17 +33,11 @@ export function IndexRow({ item }: { item: CardView }) {
 export function FeatureLead({ item }: { item: CardView }) {
   const { p, t, lang } = useLang();
   return (
-    <Link className="lead" href={item.href}>
+    <Link className="lead" href={item.href} data-cat={item.categories[0]?.en ?? ''} data-title={item.title.en}>
       <div className="lead-art">
-        <div className="lead-frame">
+        <div className="lead-frame fit">
           {item.img.lead ? (
-            <img
-              src={item.img.lead}
-              alt={item.img.alt}
-              width={1440}
-              height={810}
-              fetchPriority="high"
-            />
+            <FitImg src={item.img.lead} blur={item.img.blur} alt={item.img.alt} width={1440} height={810} priority />
           ) : null}
         </div>
       </div>
@@ -89,10 +84,10 @@ export function ArticleTile({ item }: { item: CardView }) {
   const { p, t } = useLang();
   const tags = tagsFor(item.categories, p);
   return (
-    <Link className="card" href={item.href}>
-      <div className="card-img">
+    <Link className="card" href={item.href} data-cat={item.categories[0]?.en ?? ''} data-title={item.title.en}>
+      <div className="card-img fit">
         {item.img.card ? (
-          <img src={item.img.card} alt={item.img.alt} loading="lazy" width={720} height={405} />
+          <FitImg src={item.img.card} blur={item.img.blur} alt={item.img.alt} width={720} height={405} />
         ) : null}
       </div>
       <div className="card-body">
@@ -117,10 +112,10 @@ export function ArticleTile({ item }: { item: CardView }) {
 export function GuideCard({ item }: { item: CardView }) {
   const { p, t } = useLang();
   return (
-    <Link className="fg" href={item.href}>
-      <div className="fg-img">
+    <Link className="fg" href={item.href} data-cat={item.categories[0]?.en ?? ''} data-title={item.title.en}>
+      <div className="fg-img fit">
         {item.img.card ? (
-          <img src={item.img.card} alt={item.img.alt} loading="lazy" width={720} height={405} />
+          <FitImg src={item.img.card} blur={item.img.blur} alt={item.img.alt} width={720} height={405} />
         ) : null}
       </div>
       <div className="fg-body">
@@ -152,7 +147,7 @@ export function TimelineRow({ item }: { item: CardView }) {
       <div className="tl-node">
         <i />
       </div>
-      <Link className="tl-card" href={item.href}>
+      <Link className="tl-card" href={item.href} data-cat={item.categories[0]?.en ?? ''} data-title={item.title.en}>
         <div className="tl-body">
           <div className="tags">
             <span className="tag">{p(item.categories[0])}</span>
@@ -160,9 +155,9 @@ export function TimelineRow({ item }: { item: CardView }) {
           <h3>{p(item.title)}</h3>
           <p>{p(item.excerpt)}</p>
         </div>
-        <div className="tl-img">
+        <div className="tl-img fit">
           {item.img.card ? (
-            <img src={item.img.card} alt={item.img.alt} loading="lazy" width={720} height={405} />
+            <FitImg src={item.img.card} blur={item.img.blur} alt={item.img.alt} width={720} height={405} />
           ) : null}
         </div>
       </Link>

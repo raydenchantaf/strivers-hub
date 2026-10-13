@@ -7,7 +7,7 @@ import {
   RELATED_RESOURCES,
   RESOURCE_BY_SLUG,
 } from '@/sanity/queries';
-import { dimensionsOf, urlFor, type SanityImage } from '@/sanity/image';
+import { blurFor, dimensionsOf, urlFor, type SanityImage } from '@/sanity/image';
 import {
   hrefFor,
   kindOf,
@@ -106,20 +106,21 @@ export async function getAllSlugs(): Promise<
 /* Image URLs are resolved on the server so the image-url builder never ships
    to the browser, and so each component gets exactly the crop it renders. */
 
-const BLANK = { thumb: '', card: '', lead: '', alt: '', w: 0, h: 0 };
+const BLANK = { thumb: '', card: '', lead: '', alt: '', blur: '', w: 0, h: 0 };
 
 export function toView(a: ArticleCard): CardView {
-  /* Cards ask the CDN for a crop, because a grid needs one shape. The lead
-     asks for a width only: event posters and infographics carry text to the
-     edges, and a 16:9 crop was cutting the dates and the sign-up panel off
-     the bottom. */
+  /* Nothing is cropped. Many of these images are posters and infographics
+     with text to the edges, and a crop cut titles, dates and logos off. Every
+     frame keeps its shape and shows the whole picture inside it, over a
+     blurred copy of itself, so a grid still lines up. */
   const natural = a.image ? dimensionsOf(a.image) : null;
   const img = a.image
     ? {
-        thumb: urlFor(a.image, 320, 200),
-        card: urlFor(a.image, 720, 405),
+        thumb: urlFor(a.image, 480),
+        card: urlFor(a.image, 720),
         lead: urlFor(a.image, 1440),
         alt: (a.image as { alt?: string }).alt ?? '',
+        blur: blurFor(a.image),
         w: natural?.width ?? 1440,
         h: natural?.height ?? 810,
       }

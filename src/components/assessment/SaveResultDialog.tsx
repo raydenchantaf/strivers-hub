@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { L as Link } from '@/components/L';
 import { useLang } from '@/components/LangProvider';
 import { markOutcomeSaved } from '@/lib/assessment/outcome';
+import { flushNow, track } from '@/lib/analytics/client';
 
 /**
  * The registration prompt, over the finished result.
@@ -95,6 +96,8 @@ export function SaveResultDialog({
       const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (json.ok) {
         markOutcomeSaved();
+        track('quiz', { s: 'reg' });
+        flushNow();
         dismiss();
         /* A full navigation rather than a router push: the dashboard is
            rendered from the session cookie this request has just set, and a
@@ -205,7 +208,14 @@ export function SaveResultDialog({
           <button className="btn btn-solid" type="submit" form="gate-form" disabled={busy}>
             <span>{busy ? t('up.working') : t('gate.cta')}</span> <span className="arw">&#8594;</span>
           </button>
-          <button className="gate-skip" type="button" onClick={dismiss}>
+          <button
+            className="gate-skip"
+            type="button"
+            onClick={() => {
+              track('quiz', { s: 'skip' });
+              dismiss();
+            }}
+          >
             {t('gate.skip')} <span className="arw">&#8594;</span>
           </button>
         </div>

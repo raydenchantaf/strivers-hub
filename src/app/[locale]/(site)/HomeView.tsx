@@ -114,7 +114,7 @@ const PATHS = [
 function Pathways() {
   const { t } = useLang();
   return (
-    <section className="band" id="pathways">
+    <section className="band" id="pathways" data-section="pathways">
       <div className="shell">
         <Reveal className="sec-head">
           <span className="eyebrow">{t('path.eyebrow')}</span>
@@ -167,7 +167,7 @@ function Pathways() {
 function Steps() {
   const { t } = useLang();
   return (
-    <section className="band band-dark band-steps">
+    <section className="band band-dark band-steps" data-section="steps">
       <div className="shell">
         <Reveal className="sec-head">
           <span className="eyebrow">{t('how.eyebrow')}</span>
@@ -193,7 +193,7 @@ function Steps() {
 function MentorSplit() {
   const { t } = useLang();
   return (
-    <section className="band">
+    <section className="band" data-section="mentor">
       <div className="shell">
         <div className="split">
           <Reveal className="split-art">
@@ -259,7 +259,7 @@ export function HomeView({
 
   return (
     <>
-      <header className="hero">
+      <header className="hero" data-section="hero">
         <div className="hero-bg" aria-hidden="true">
           <span className="blob blob-1" />
           <span className="blob blob-2" />
@@ -315,7 +315,7 @@ export function HomeView({
 
       {/* Platform coverage. The heading lives inside WordHex: above the
           breakpoint it sits in the middle of the hexagon the words form. */}
-      <section
+      <section data-section="field"
         className="band"
         style={{ paddingTop: 'clamp(52px,6vw,80px)', paddingBottom: 'clamp(30px,3.6vw,56px)' }}
       >
@@ -330,7 +330,7 @@ export function HomeView({
       <Steps />
       <MentorSplit />
 
-      <section className="band band-shell">
+      <section className="band band-shell" data-section="guides">
         <div className="shell">
           <Reveal
             className="sec-head"
@@ -363,7 +363,7 @@ export function HomeView({
         </div>
       </section>
 
-      <section className="rd-band">
+      <section className="rd-band" data-section="rakyat">
         <div className="shell">
           <Reveal className="rd">
             <div style={{ position: 'relative', zIndex: 1 }}>

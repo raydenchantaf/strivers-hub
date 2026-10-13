@@ -37,7 +37,7 @@ export default async function EventsPage() {
     venue: e.venue,
     city: e.city,
     capacity: e.capacity,
-    img: e.img ? { card: e.img.card, alt: e.img.alt } : null,
+    img: e.img ? { card: e.img.card, alt: e.img.alt, blur: e.img.blur } : null,
     past: isPast,
   });
 
@@ -58,7 +58,7 @@ export default async function EventsPage() {
             venue: null,
             city: null,
             capacity: null,
-            img: a.img.card ? { card: a.img.card, alt: a.img.alt } : null,
+            img: a.img.card ? { card: a.img.card, alt: a.img.alt, blur: a.img.blur } : null,
             past: true,
           }),
         )

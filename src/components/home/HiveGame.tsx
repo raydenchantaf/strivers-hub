@@ -28,6 +28,7 @@ import {
   type Sized,
 } from './hive/geometry';
 import { renderCard } from './hive/card';
+import { track as send } from '@/lib/analytics/client';
 
 /**
  * The hive: a ninety-second game on the homepage.
@@ -61,9 +62,10 @@ function reduced() {
   return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
+/* hive_start -> { s: 'start' } and so on: first-party, and mirrored to GA4
+   under the same hive_* names it always had (see analytics/client.ts) */
 function track(name: string, params: Record<string, unknown> = {}) {
-  const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
-  if (typeof g === 'function') g('event', name, params);
+  send('hive', { s: name.replace(/^hive_/, ''), ...params });
 }
 
 function fontVar(name: string, fallback: string) {
@@ -227,6 +229,9 @@ export function HiveGame({ guides }: { guides: HiveGuide[] }) {
     }
     setFull(false);
     setPicks([...picks, id]);
+    /* what a visitor says her business is about: the "find your field"
+       interest the insights page reports */
+    send('field', { src: 'hive', w: id, label: WORD_BY_ID[id]?.label.en ?? id });
   }
 
   /* Bring the game back under the nav bar after an act changes. It runs
@@ -517,7 +522,7 @@ export function HiveGame({ guides }: { guides: HiveGuide[] }) {
   const [askA, askB] = t('hv.a2.ask').split('{stage}');
 
   return (
-    <section className="band hv-band" id="hive" aria-labelledby="hv-h">
+    <section className="band hv-band" id="hive" aria-labelledby="hv-h" data-section="hive">
       <div className="shell">
         <Reveal className="sec-head mid">
           <span className="eyebrow">{t('hv.eyebrow')}</span>

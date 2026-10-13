@@ -1,5 +1,7 @@
 'use client';
 
+import { FitImg } from '@/components/content/FitImg';
+
 import { L as Link } from '@/components/L';
 import { useLang } from '@/components/LangProvider';
 import { dateParts } from '@/lib/content-format';
@@ -14,7 +16,7 @@ export type EventCard = {
   venue: string | null;
   city: string | null;
   capacity: number | null;
-  img: { card: string; alt: string } | null;
+  img: { card: string; alt: string; blur?: string } | null;
   past: boolean;
 };
 
@@ -78,9 +80,9 @@ export function EventRow({ item }: { item: EventCard }) {
             </div>
           ) : null}
         </div>
-        <div className="tl-img">
+        <div className="tl-img fit">
           {item.img?.card ? (
-            <img src={item.img.card} alt={item.img.alt} loading="lazy" width={720} height={405} />
+            <FitImg src={item.img.card} blur={item.img.blur} alt={item.img.alt} width={720} height={405} />
           ) : null}
         </div>
       </Link>
