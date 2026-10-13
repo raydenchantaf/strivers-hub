@@ -13,6 +13,23 @@ import { urlFor, type SanityImage } from '@/sanity/image';
  * inside the reading column is both a privacy disclosure under the PDPA and a
  * layout hazard; a card keeps the rhythm and still gets the reader there.
  */
+
+/**
+ * The HTML blocks editors paste (comparison tables, mostly) are rendered as
+ * written, minus anything that could run code: script tags, frames and
+ * plugins, inline event handlers (onclick= and the like) and javascript:
+ * links. Editors are trusted; this is for the day an editor account is not.
+ * The Content-Security-Policy cannot do it alone, because the site has to
+ * allow inline scripts for Next.js.
+ */
+export function defang(html: string): string {
+  return html
+    .replace(/<script\b[\s\S]*?(<\/script\s*>|$)/gi, '')
+    .replace(/<\/?(iframe|frame|frameset|object|embed|applet|link|meta|base|form)\b[^>]*>/gi, '')
+    .replace(/\s+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/(href|src|xlink:href|action|formaction)\s*=\s*(["']?)\s*(javascript|vbscript|data):/gi, '$1=$2#blocked:');
+}
+
 function components(lang: 'en' | 'bm'): PortableTextComponents {
   return {
     block: {
@@ -98,7 +115,7 @@ function components(lang: 'en' | 'bm'): PortableTextComponents {
         return <div className={`ab-note ab-note-${value?.tone ?? 'note'}`}>{text}</div>;
       },
       rawHtml: ({ value }) => {
-        const code: string = value?.code ?? '';
+        const code = defang(value?.code ?? '');
         if (!code) return null;
         return <div className="ab-table" dangerouslySetInnerHTML={{ __html: code }} />;
       },

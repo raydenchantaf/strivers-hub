@@ -1,3 +1,44 @@
+const dev = process.env.NODE_ENV !== 'production';
+
+/**
+ * Content-Security-Policy: which sources a page may load scripts, styles,
+ * images and frames from, and where it may send data.
+ *
+ * Scripts allow 'unsafe-inline' because Next.js writes small inline scripts
+ * into every page to start React. The alternative, a per-request nonce, would
+ * make every page render on demand instead of being served pre-built, and the
+ * site is built around pre-built pages. What the policy still enforces: no
+ * script from any other site except Google's analytics tag, no plugins, no
+ * sending data or forms anywhere but this site and Google Analytics, no
+ * <base> rewriting, and no framing by other sites (clickjacking).
+ *
+ * Development adds what `next dev` needs: eval for fast refresh, and the
+ * websocket for hot reload.
+ */
+const GA = ['https://www.googletagmanager.com', 'https://*.google-analytics.com', 'https://*.analytics.google.com'];
+
+const SITE_CSP = [
+  `default-src 'self'`,
+  `script-src 'self' 'unsafe-inline' https://www.googletagmanager.com${dev ? " 'unsafe-eval'" : ''}`,
+  `style-src 'self' 'unsafe-inline'`,
+  `img-src 'self' data: blob: https://cdn.sanity.io ${GA.join(' ')}`,
+  `font-src 'self' data:`,
+  `connect-src 'self' ${GA.join(' ')}${dev ? ' ws: wss:' : ''}`,
+  `frame-src 'self'`,
+  `worker-src 'self' blob:`,
+  `media-src 'self'`,
+  `object-src 'none'`,
+  `base-uri 'self'`,
+  `form-action 'self'`,
+  `frame-ancestors 'self'`,
+  ...(dev ? [] : ['upgrade-insecure-requests']),
+].join('; ');
+
+/* The embedded Sanity Studio is Sanity's own application, talking to its own
+   APIs; it gets only the rules that cannot affect it - no framing by other
+   sites, no plugins, no <base> rewriting. */
+const STUDIO_CSP = [`object-src 'none'`, `base-uri 'self'`, `frame-ancestors 'self'`].join('; ');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Next 16 writes AGENTS.md and CLAUDE.md into the repo root on `next dev`.
@@ -26,17 +67,22 @@ const nextConfig = {
       ? [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }]
       : [];
 
-    return [{
-      source: '/:path*',
-      headers: [
-        { key: 'X-Content-Type-Options', value: 'nosniff' },
-        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-        { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-        { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-        ...preview,
-      ],
-    }];
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          ...preview,
+        ],
+      },
+      // one policy per path: every page but the Studio, and the Studio
+      { source: '/((?!studio).*)', headers: [{ key: 'Content-Security-Policy', value: SITE_CSP }] },
+      { source: '/studio/:path*', headers: [{ key: 'Content-Security-Policy', value: STUDIO_CSP }] },
+    ];
   },
 };
 export default nextConfig;

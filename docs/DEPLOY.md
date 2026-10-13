@@ -75,11 +75,17 @@ Vercel has no Malaysian region. The current live platform runs its
 functions in US East (`iad1`) while serving the edge from Singapore, which adds
 a trans-Pacific round trip to every uncached request.
 
-In `vercel.json`, or in Project Settings → Functions:
+This is set in `vercel.json` (`"regions": ["sin1"]`), so it travels with the
+code. Project Settings → Functions shows the same choice.
 
-```json
-{ "regions": ["sin1"] }
-```
+### Branch builds
+
+`vercel.json` also stops Vercel building the `rebuild` branch
+(`git.deploymentEnabled`). The Vercel project currently serving
+strivershub.com deploys every branch of its repository, and a preview of this
+branch would run against the live site's environment variables, including its
+database. Remove that entry once the project's Preview environment has its
+own `DATABASE_URL` (a Neon branch, never production) and `SITE_NOINDEX=1`.
 
 ## Sanity
 
