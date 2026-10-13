@@ -77,9 +77,7 @@ export async function POST(request: Request) {
       language,
       score,
       category: band.key.en,
-      answers,
       answersReadable: readableById(answers, language, otherTexts),
-      otherTexts,
     });
     return NextResponse.json({ ok: true, id, saved: Boolean(session) });
   } catch (error) {

@@ -24,7 +24,9 @@ export function pool(): Pool | null {
   if (!g.__shPool) {
     const local = /@(localhost|127\.0\.0\.1)[:/]/.test(url);
     g.__shPool = new Pool({
-      connectionString: url,
+      /* Neon hands out `sslmode=require`; spell out the full certificate check
+         it already gets today, before pg's next major version weakens it */
+      connectionString: url.replace(/sslmode=require/, 'sslmode=verify-full'),
       max: 4,
       idleTimeoutMillis: 30_000,
       ssl: local ? undefined : { rejectUnauthorized: true },

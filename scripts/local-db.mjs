@@ -9,10 +9,9 @@
  * can be built and tested without touching real data. It refuses to run
  * against anything but localhost.
  *
- * The layout is the end state of the previous platform's own migration
- * scripts, with one correction: `assessment_submissions.answers` is nullable,
- * because that platform's own insert never fills it, so the live column
- * cannot be NOT NULL.
+ * The layout is copied from the live Neon database (read on 14 October 2026),
+ * which differs from the previous platform's migration scripts in one place:
+ * `assessment_submissions` has no `answers` or `other_texts` columns.
  *
  * It also adds one account made the way the previous platform made them, so
  * signing in as an existing member can be tested:
@@ -62,11 +61,12 @@ create table if not exists assessment_submissions (
   language         text not null,
   score            integer not null,
   category         text not null,
-  answers          jsonb,
-  answers_readable jsonb,
-  other_texts      jsonb,
-  submitted_at     timestamptz default now()
+  submitted_at     timestamptz default now(),
+  answers_readable jsonb
 );
+-- an older local copy may still have the two columns production does not
+alter table assessment_submissions drop column if exists answers;
+alter table assessment_submissions drop column if exists other_texts;
 
 create table if not exists mentorship_signups (
   id           serial primary key,

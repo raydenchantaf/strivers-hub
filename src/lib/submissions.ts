@@ -7,6 +7,12 @@ import { db } from '@/lib/db';
  * `mentorship_signups`. Rows are written in the same shape that platform
  * wrote, so TAF's Excel export (scripts/export.mjs in the old repository)
  * keeps working on old and new rows alike.
+ *
+ * The live `assessment_submissions` table has only these columns: id,
+ * user_id, language, score, category, submitted_at and answers_readable. The
+ * old repository's migration script also defines `answers` and
+ * `other_texts`, but they do not exist in production, so nothing is written
+ * to them. A typed "other" answer is carried inside answers_readable.
  */
 
 export type Submission = {
@@ -14,11 +20,8 @@ export type Submission = {
   language: 'en' | 'bm';
   score: number;
   category: string;
-  /** option ids as given, keyed by question id */
-  answers: Record<string, string | string[]>;
   /** readable text keyed by question id; see readableById() */
   answersReadable: Record<string, string>;
-  otherTexts: Record<string, string>;
 };
 
 const idOf = (id: string | null): number | null => (id && /^\d{1,10}$/.test(id) ? Number(id) : null);
@@ -26,19 +29,10 @@ const idOf = (id: string | null): number | null => (id && /^\d{1,10}$/.test(id) 
 /** Stores one completed assessment and returns its row id. */
 export async function saveSubmission(s: Submission): Promise<string> {
   const { rows } = await db().query<{ id: number }>(
-    `insert into assessment_submissions
-       (user_id, language, score, category, answers, answers_readable, other_texts)
-     values ($1, $2, $3, $4, $5::jsonb, $6::jsonb, $7::jsonb)
+    `insert into assessment_submissions (user_id, language, score, category, answers_readable)
+     values ($1, $2, $3, $4, $5::jsonb)
      returning id`,
-    [
-      idOf(s.userId),
-      s.language,
-      s.score,
-      s.category,
-      JSON.stringify(s.answers),
-      JSON.stringify(s.answersReadable),
-      Object.keys(s.otherTexts).length ? JSON.stringify(s.otherTexts) : null,
-    ],
+    [idOf(s.userId), s.language, s.score, s.category, JSON.stringify(s.answersReadable)],
   );
   return String(rows[0].id);
 }
