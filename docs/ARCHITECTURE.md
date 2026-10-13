@@ -285,6 +285,13 @@ platform of this size — the document type is read-only in the Studio and the
 hash field is hidden — but it is a decision the client should make knowingly,
 which is why it appears in `HANDOVER.md`.
 
+**Since revised.** The codebase handover from TAF's consultant showed that the
+platform's existing users live in a Neon Postgres database, and Sanity's plans
+count every account and every assessment response as a document (10,000 free,
+25,000 on Growth). The technical review (D2, §07) therefore recommends moving
+accounts, assessment results and mentorship sign-ups to Neon. The interface
+above is what keeps that change to one file.
+
 ## What is deliberately not here
 
 - **No custom admin panel.** The Studio is better than anything we would

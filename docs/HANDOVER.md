@@ -32,22 +32,35 @@ That is the whole blocking list. Items 1 and 2 take about five minutes each.
 ### Where the data lives
 
 The platform's current privacy policy tells users their data is held in
-Singapore. Our recommendation is to **move the primary region to Malaysia** —
-the audience is Malaysian, the programme is Malaysian, and under the PDPA
-(Amendment) Act 2024 keeping personal data onshore removes a class of
-questions you would otherwise have to answer. Sanity's dataset region and the
-Vercel function region can both be set at deploy time; nothing in the code
-changes. If you would rather stay as you are, that works too — tell us which.
+Singapore, and with the recommendation below it stays true. None of the
+services this platform uses offers a Malaysian region:
+
+| Service | Holds | Region |
+|---|---|---|
+| Neon | Accounts, assessment results, mentorship sign-ups | AWS Singapore |
+| Vercel | Nothing stored; runs the server code | Functions pinned to Singapore (`sin1`) |
+| Sanity | Articles, events, pages, images | Google Cloud, Belgium; Sanity offers no choice of region |
+
+Since 1 April 2025 the PDPA allows personal data to go abroad where the
+destination's protection is equivalent, an assessment TAF makes and keeps on
+file. If TAF's assessment requires personal data to stay onshore, the platform
+needs different hosting and the estimate changes, so we need the answer early.
+The technical review (D2, §08) sets this out in full.
 
 ### Where accounts live
 
-Accounts are currently stored in the same Sanity dataset as the content, as a
-document type that is read-only in the Studio with the password field hidden.
-That keeps the number of services you own at one.
+The review build stores accounts in the same Sanity dataset as the content, as
+a document type that is read-only in the Studio with the password field
+hidden. We did that to keep the number of services you own at one.
 
-If you would prefer identity kept out of the CMS entirely, `src/lib/auth/store.ts`
-is the only file that changes — everything above it talks to four functions.
-Moving to Supabase, Auth0 or a managed Postgres is roughly a day's work.
+**We now recommend Neon instead** (D2, §07). Your existing users already live
+in the Neon database the current platform uses, so moving there strands
+nobody; it keeps personal data in Singapore and out of the content system;
+and it avoids Sanity's document limits, which count every account and every
+assessment response (10,000 on the free plan, 25,000 on Growth).
+`src/lib/auth/store.ts` is the only file that changes, because everything
+above it talks to four functions. About two days including a migration
+rehearsal on a copy of production.
 
 ### Whether we keep the assessment scoring as it is
 
@@ -82,9 +95,13 @@ Nothing in this build carries a recurring licence fee. The costs are:
 
 | Item | Typical cost | Notes |
 |---|---|---|
-| Sanity | Free tier is likely sufficient | You are already on it |
-| Vercel | Free to ~USD 20/month | Depends on traffic |
+| Vercel | USD 20/month (Pro, one seat) | The free Hobby plan is for personal, non-commercial use only |
+| Neon | Usage-based, expected under USD 20/month | The free plan works but suspends after five minutes idle |
+| Sanity | Free tier is sufficient | You are already on it; 20 seats, 10,000 documents |
+| Resend | Free tier is sufficient | 3,000 emails a month, 100 a day |
 | Domain | Existing | Unchanged |
+
+Prices as published by each provider in October 2026. See D2, §10.
 
 Everything else — the framework, the fonts, the libraries — is open source.
 There is no seat licence, no per-editor charge, and no component we rent.

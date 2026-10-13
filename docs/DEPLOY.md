@@ -66,8 +66,8 @@ there. No build configuration is needed; the defaults are correct.
 
 ### Region
 
-Set the function region to **Singapore (`sin1`)** at minimum, and to a
-Malaysian region if the account offers one. The current live platform runs its
+Set the function region to **Singapore (`sin1`)**, beside the Neon database.
+Vercel has no Malaysian region. The current live platform runs its
 functions in US East (`iad1`) while serving the edge from Singapore, which adds
 a trans-Pacific round trip to every uncached request.
 
