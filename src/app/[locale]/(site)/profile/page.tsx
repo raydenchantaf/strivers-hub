@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { ProfileView } from './ProfileView';
 import { readSession } from '@/lib/auth/session';
 import { findById } from '@/lib/auth/store';
-import { sanityFetch } from '@/sanity/client';
+import { latestResult } from '@/lib/submissions';
 import { bandOf } from '@/lib/assessment/scoring';
 import { getBands } from '@/lib/assessment/grades';
 
@@ -21,9 +21,6 @@ export async function generateMetadata({
   };
 }
 
-const LATEST_RESULT = `*[_type == "assessmentResponse" && email == $email]
-  | order(submittedAt desc)[0]{ score, category, submittedAt }`;
-
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const session = await readSession();
@@ -31,10 +28,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
   const [account, result] = await Promise.all([
     findById(session.sub).catch(() => null),
-    sanityFetch<{ score?: number; category?: string; submittedAt?: string } | null>(LATEST_RESULT, {
-      params: { email: session.email },
-      revalidate: 0,
-    }).catch(() => null),
+    latestResult(session.sub).catch(() => null),
   ]);
 
   /* The session is the source of truth for identity; the account row fills in

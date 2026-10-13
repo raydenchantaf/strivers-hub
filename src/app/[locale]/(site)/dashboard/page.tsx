@@ -3,7 +3,7 @@ import { alternates, localeOf } from '@/lib/i18n/routing';
 import { redirect } from 'next/navigation';
 import { DashboardView } from './DashboardView';
 import { readSession } from '@/lib/auth/session';
-import { sanityFetch } from '@/sanity/client';
+import { latestResult } from '@/lib/submissions';
 import { getAllArticles, toView } from '@/lib/content';
 import { bandOf } from '@/lib/assessment/scoring';
 import { getBands } from '@/lib/assessment/grades';
@@ -21,19 +21,15 @@ export async function generateMetadata({
   };
 }
 
-const LATEST_RESULT = `*[_type == "assessmentResponse" && email == $email]
-  | order(submittedAt desc)[0]{ score, category, submittedAt }`;
-
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const session = await readSession();
   if (!session) redirect(`/${locale}/login`);
 
-  const result = await sanityFetch<{
-    score?: number;
-    category?: string;
-    submittedAt?: string;
-  } | null>(LATEST_RESULT, { params: { email: session.email }, revalidate: 0 }).catch(() => null);
+  const result = await latestResult(session.sub).catch((err) => {
+    console.error('[dashboard] latest result unavailable', err.message);
+    return null;
+  });
 
   const list = await getBands();
   const band =

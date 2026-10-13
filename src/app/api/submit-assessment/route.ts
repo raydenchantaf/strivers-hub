@@ -1,28 +1,53 @@
 import { NextResponse } from 'next/server';
-import { writeClient } from '@/sanity/client';
 import { readSession } from '@/lib/auth/session';
-import { attachResult } from '@/lib/auth/store';
+import { questions } from '@/lib/assessment/questions';
+import { bandOf, readableById, scoreOf } from '@/lib/assessment/scoring';
+import { getBands } from '@/lib/assessment/grades';
+import type { Answers } from '@/lib/assessment/types';
+import { saveSubmission } from '@/lib/submissions';
 
 export const runtime = 'nodejs';
 
 type Payload = {
   language?: string;
-  score?: number;
-  category?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  consent?: boolean;
-  answers?: Record<string, string>;
+  answers?: unknown;
+  otherTexts?: unknown;
 };
 
-const str = (v: unknown, max = 500) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+/* every id the form can send: the questions, plus the contact sub-fields */
+const KNOWN = new Set<string>(
+  Object.values(questions).flatMap((q) => [q.id, ...(q.fields ?? []).map((f) => f.id)]),
+);
+
+const clip = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+
+/** Only known question ids, with short string or string-list values. */
+function cleanAnswers(raw: unknown): Answers {
+  const out: Answers = {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  for (const [id, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (!KNOWN.has(id)) continue;
+    if (Array.isArray(v)) out[id] = v.slice(0, 20).map((x) => clip(x, 200)).filter(Boolean);
+    else if (typeof v === 'string') out[id] = clip(v, 500);
+  }
+  return out;
+}
+
+function cleanTexts(raw: unknown): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  for (const [id, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (KNOWN.has(id) && typeof v === 'string' && v.trim()) out[id] = clip(v, 300);
+  }
+  return out;
+}
 
 /**
- * Records one completed assessment. The response is deliberately thin: the
- * visitor's result is computed in the browser and shown whether or not this
- * write succeeds, so a CMS outage never costs someone their result.
+ * Records one completed assessment in `assessment_submissions`. The visitor's
+ * result is computed in the browser and shown whether or not this write
+ * succeeds, so a database outage never costs someone their result. The score
+ * and stage stored here are worked out again from the answers, not taken from
+ * the browser.
  */
 export async function POST(request: Request) {
   let body: Payload;
@@ -32,19 +57,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: 'BAD_JSON' }, { status: 400 });
   }
 
-  const score = Number(body.score);
-  if (!Number.isFinite(score) || score < 0 || score > 18) {
-    return NextResponse.json({ ok: false, error: 'BAD_SCORE' }, { status: 400 });
-  }
+  const answers = cleanAnswers(body.answers);
+  const otherTexts = cleanTexts(body.otherTexts);
+  if (!answers.q1) return NextResponse.json({ ok: false, error: 'NO_ANSWERS' }, { status: 400 });
 
-  const answers = Object.entries(body.answers ?? {})
-    .slice(0, 40)
-    .map(([question, answer]) => ({
-      _type: 'object',
-      _key: Math.random().toString(36).slice(2, 10),
-      question: str(question, 300),
-      answer: str(answer, 1000),
-    }));
+  const language = body.language === 'en' ? 'en' : 'bm';
+  const score = scoreOf(answers);
+  const band = bandOf(score, await getBands());
 
   /* Someone who is already signed in should not have to do anything for
      their result to be kept - it is attached on the way in. Anonymous
@@ -52,38 +71,19 @@ export async function POST(request: Request) {
      an account around it. */
   const session = await readSession();
 
-  let id: string;
   try {
-    const doc = await writeClient().create({
-      _type: 'assessmentResponse',
-      submittedAt: new Date().toISOString(),
-      language: str(body.language, 4) || 'bm',
+    const id = await saveSubmission({
+      userId: session?.sub ?? null,
+      language,
       score,
-      category: str(body.category, 40),
-      firstName: str(body.firstName, 80),
-      lastName: str(body.lastName, 80),
-      email: str(body.email, 160).toLowerCase(),
-      phone: str(body.phone, 40),
-      consent: body.consent === true,
+      category: band.key.en,
       answers,
-      ...(session ? { account: { _type: 'reference', _ref: session.sub } } : {}),
+      answersReadable: readableById(answers, language, otherTexts),
+      otherTexts,
     });
-    id = doc._id;
+    return NextResponse.json({ ok: true, id, saved: Boolean(session) });
   } catch (error) {
     console.error('assessment write failed', error);
     return NextResponse.json({ ok: false, error: 'WRITE_FAILED' }, { status: 502 });
   }
-
-  /* The back-reference is a second write, and a failure here is not worth
-     losing the response over: the result document already carries the link.
-     Logged, not thrown. */
-  if (session) {
-    try {
-      await attachResult(session.sub, id);
-    } catch (error) {
-      console.error('could not point the account at its new result', error);
-    }
-  }
-
-  return NextResponse.json({ ok: true, id, saved: Boolean(session) });
 }

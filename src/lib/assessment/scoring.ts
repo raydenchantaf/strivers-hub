@@ -93,10 +93,14 @@ export function nextIdFor(q: Question, value: Answers[string] | undefined): stri
 }
 
 /**
- * Turn stored answers into readable text, for the CMS record and for any
- * export TAF runs later. Ids alone are useless to a programme officer.
+ * Answers as readable text, keyed by question id, in exactly the shape the
+ * previous platform stored in `assessment_submissions.answers_readable`:
+ * option labels in the visitor's language, several choices joined with ", ",
+ * a typed "other" answer as "Other: <text>", and the contact fields (q5g to
+ * q5j) as typed. TAF's Excel export and the sign-in email match both read
+ * this column, so the shape must not drift.
  */
-export function readableAnswers(
+export function readableById(
   answers: Answers,
   lang: 'en' | 'bm',
   otherTexts: Record<string, string> = {},
@@ -104,24 +108,21 @@ export function readableAnswers(
   const out: Record<string, string> = {};
   for (const [id, value] of Object.entries(answers)) {
     const q = questions[id];
-    if (!q) {
-      out[id] = Array.isArray(value) ? value.join(', ') : value;
-      continue;
-    }
-    const label = q.text[lang];
-    if (q.type === 'text' || q.type === 'likert' || q.type === 'multi-text') {
-      out[label] = Array.isArray(value) ? value.join(', ') : value;
+    if (!q || q.type === 'text' || q.type === 'likert' || q.type === 'multi-text') {
+      out[id] = Array.isArray(value) ? value.join(', ') : (value ?? '');
       continue;
     }
     const chosen = Array.isArray(value) ? value : [value];
-    const names = chosen.map((optionId) => {
-      const opt = q.options?.find((o) => o.id === optionId);
-      if (!opt) return optionId;
-      const extra = opt.hasOther && otherTexts[id] ? ` (${otherTexts[id]})` : '';
-      return opt.label[lang] + extra;
-    });
-    out[label] = names.join(', ');
+    out[id] = chosen
+      .map((optionId) => {
+        const opt = q.options?.find((o) => o.id === optionId);
+        if (opt?.hasOther && otherTexts[id]) return `Other: ${otherTexts[id]}`;
+        return opt?.label[lang] ?? optionId;
+      })
+      .join(', ');
   }
+  /* the sign-in match compares emails in lower case */
+  if (out.q5i) out.q5i = out.q5i.trim().toLowerCase();
   return out;
 }
 

@@ -220,7 +220,7 @@ export async function claimByEmail(accountId: string, email: string): Promise<vo
   if (uid === null) return;
   await db().query(
     `update assessment_submissions set user_id = $1
-     where user_id is null and answers_readable->>'q5i' = $2`,
+     where user_id is null and lower(trim(answers_readable->>'q5i')) = $2`,
     [uid, norm(email)],
   );
 }

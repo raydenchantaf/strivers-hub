@@ -3,7 +3,7 @@ import { alternates, localeOf } from '@/lib/i18n/routing';
 import { cookies } from 'next/headers';
 import { ResultsView } from './ResultsView';
 import { readSession } from '@/lib/auth/session';
-import { sanityFetch } from '@/sanity/client';
+import { latestResult } from '@/lib/submissions';
 import { getAllArticles, toView } from '@/lib/content';
 import { bandOf, MAX_SCORE } from '@/lib/assessment/scoring';
 import { getBands } from '@/lib/assessment/grades';
@@ -22,9 +22,6 @@ export async function generateMetadata({
   };
 }
 
-const LATEST_RESULT = `*[_type == "assessmentResponse" && email == $email]
-  | order(submittedAt desc)[0]{ score, submittedAt }`;
-
 /**
  * The result as its own page, so it can be returned to, linked from the
  * dashboard, and read after the tool has been closed.
@@ -42,10 +39,10 @@ export default async function Page() {
   let takenAt: string | null = null;
 
   if (session) {
-    const row = await sanityFetch<{ score?: number; submittedAt?: string } | null>(LATEST_RESULT, {
-      params: { email: session.email },
-      revalidate: 0,
-    }).catch(() => null);
+    const row = await latestResult(session.sub).catch((err) => {
+      console.error('[results] latest result unavailable', err.message);
+      return null;
+    });
     if (typeof row?.score === 'number') {
       score = row.score;
       takenAt = row.submittedAt ?? null;

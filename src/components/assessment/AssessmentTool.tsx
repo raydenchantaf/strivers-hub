@@ -8,7 +8,6 @@ import {
   isAnswered,
   nextIdFor,
   progressOf,
-  readableAnswers,
   scoreOf,
 } from '@/lib/assessment/scoring';
 import type { Answer, Answers, Band } from '@/lib/assessment/types';
@@ -237,17 +236,9 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
     setSubmitting(true);
     const score = scoreOf(answers);
     const band = bandOf(score, bands);
-    const payload = {
-      language: lang,
-      score,
-      category: band.key.en,
-      firstName: fieldValues.q5g ?? '',
-      lastName: fieldValues.q5h ?? '',
-      email: fieldValues.q5i ?? '',
-      phone: fieldValues.q5j ?? '',
-      consent: agreed,
-      answers: readableAnswers(answers, lang, otherTexts),
-    };
+    /* the raw answers: the server works out the score, stage and readable
+       text itself and stores them in the format TAF's export reads */
+    const payload = { language: lang, answers, otherTexts };
     let id: string | undefined;
     let alreadySaved = false;
     try {
