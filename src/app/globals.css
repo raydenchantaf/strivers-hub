@@ -1658,6 +1658,8 @@ h2.sec-h .serif-i{font-weight:400;color:var(--magenta);font-size:1.08em;letter-s
 .pro-row dt{font-size:13px;font-weight:600;color:var(--muted);margin:0}
 .pro-row dd{margin:0;font-size:15px;font-weight:600;color:var(--ink);text-align:right;word-break:break-word}
 .pro-card .btn{margin-top:20px}
+.pro-card .pro-del{color:#B4341A;border-color:rgba(180,52,26,.45)}
+.pro-card .pro-del:hover{background:#B4341A;border-color:#B4341A;color:#fff}
 @media(max-width:560px){
   .pro-row{flex-direction:column;gap:3px}
   .pro-row dd{text-align:left}

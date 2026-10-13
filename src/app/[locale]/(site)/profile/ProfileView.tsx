@@ -34,6 +34,34 @@ export function ProfileView({ data }: { data: ProfileData }) {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [delBusy, setDelBusy] = useState(false);
+  const [delError, setDelError] = useState<string | null>(null);
+  const [deleted, setDeleted] = useState(false);
+
+  async function onDelete(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setDelBusy(true);
+    setDelError(null);
+    const body = Object.fromEntries(new FormData(e.currentTarget).entries());
+    try {
+      const res = await fetch('/api/auth/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      if (json.ok) {
+        setDeleted(true);
+        window.scrollTo({ top: 0 });
+        return;
+      }
+      setDelError(json.error === 'INVALID' ? 'pr.errCurrent' : 'up.errGeneric');
+    } catch {
+      setDelError('up.errGeneric');
+    } finally {
+      setDelBusy(false);
+    }
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -63,6 +91,29 @@ export function ProfileView({ data }: { data: ProfileData }) {
   }
 
   const name = [data.firstName, data.lastName].filter(Boolean).join(' ');
+
+  if (deleted) {
+    return (
+      <header className="phead" style={{ paddingBottom: 'clamp(40px,5vw,70px)' }}>
+        <HeaderField />
+        <div className="shell">
+          <div className="phead-grid">
+            <div>
+              <span className="eyebrow ld ld-1" style={{ color: 'var(--magenta)' }}>
+                {t('pr.eyebrow')}
+              </span>
+              <h1 className="ld ld-2">{t('pr.delDoneH')}</h1>
+              <p className="lede ld ld-3">{t('pr.delDoneP')}</p>
+              {/* a full load, so the header drops the signed-in menu */}
+              <a className="btn btn-solid btn-sm" href={`/${lang === 'en' ? 'en' : 'ms'}`} style={{ marginTop: 22 }}>
+                <span>{t('pr.delHome')}</span> <span className="arw">&#8594;</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <>
@@ -197,6 +248,36 @@ export function ProfileView({ data }: { data: ProfileData }) {
                 ) : done ? (
                   <p className="wnote" role="status" style={{ textAlign: 'left' }}>
                     {t('pr.pwDone')}
+                  </p>
+                ) : null}
+              </form>
+            </div>
+
+            <div className="pro-card">
+              <h2>{t('pr.delH')}</h2>
+              <p>{t('pr.delP')}</p>
+              <form onSubmit={onDelete}>
+                <div className="wgrid" style={{ marginTop: 0 }}>
+                  <div className="wf wide">
+                    <label htmlFor="pr3">
+                      <span>{t('pr.delConfirm')}</span> <i>*</i>
+                    </label>
+                    <input
+                      id="pr3"
+                      name="password"
+                      type="password"
+                      autoComplete="current-password"
+                      required
+                      placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                    />
+                  </div>
+                </div>
+                <button className="btn btn-ghost btn-sm pro-del" type="submit" disabled={delBusy}>
+                  <span>{delBusy ? t('up.working') : t('pr.delBtn')}</span>
+                </button>
+                {delError ? (
+                  <p className="wnote" role="alert" style={{ color: 'var(--magenta)', textAlign: 'left' }}>
+                    {t(delError)}
                   </p>
                 ) : null}
               </form>

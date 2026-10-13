@@ -386,6 +386,13 @@ export const dict: Record<string, Localised> = {
   "pr.pwSave": { en: "Update password", bm: "Kemas kini kata laluan" },
   "pr.pwDone": { en: "Your password has been updated.", bm: "Kata laluan anda telah dikemas kini." },
   "pr.errCurrent": { en: "That current password is not right.", bm: "Kata laluan semasa itu tidak betul." },
+  "pr.delH": { en: "Delete my account", bm: "Padam akaun saya" },
+  "pr.delP": { en: "This removes your account and sign-in details. The answers you gave in the assessment stay in the programme's records, no longer linked to an account. This cannot be undone.", bm: "Ini memadam akaun dan butiran log masuk anda. Jawapan yang anda berikan dalam penilaian kekal dalam rekod program, tanpa dikaitkan dengan mana-mana akaun. Tindakan ini tidak boleh dibatalkan." },
+  "pr.delConfirm": { en: "Your password, to confirm", bm: "Kata laluan anda, untuk pengesahan" },
+  "pr.delBtn": { en: "Delete my account", bm: "Padam akaun saya" },
+  "pr.delDoneH": { en: "Your account has been deleted", bm: "Akaun anda telah dipadam" },
+  "pr.delDoneP": { en: "You are signed out. You can still take the assessment at any time, with or without an account.", bm: "Anda telah dilog keluar. Anda masih boleh mengambil penilaian pada bila-bila masa, dengan atau tanpa akaun." },
+  "pr.delHome": { en: "Back to the homepage", bm: "Kembali ke laman utama" },
 
   "rs.eyebrow": { en: "Your result", bm: "Keputusan anda" },
   "rs.h1": { en: "Your assessment result", bm: "Keputusan penilaian anda" },
@@ -408,7 +415,7 @@ export const dict: Record<string, Localised> = {
   "db.noneH": { en: "You have not taken the assessment yet", bm: "Anda belum mengambil penilaian" },
   "db.noneP": { en: "It takes five minutes, and it is what tells us which resources to put in front of you.", bm: "Ia mengambil masa lima minit, dan itulah yang membantu kami memilih sumber yang sesuai untuk anda." },
   "db.recEyebrow": { en: "Chosen for you", bm: "Dipilih untuk anda" },
-  "db.recH": { en: "Where to <span class=\"serif-i\">start next</span>", bm: "Di mana hendak <span class=\"serif-i\">bermula seterusnya</span>" },
+  "db.recH": { en: "Where to <span class=\"serif-i\">start next</span>", bm: "Di mana hendak <span class=\"serif-i\">bermula seterusnya</span>" },
   /* ---- the hive: the homepage game ---- */
   "hv.eyebrow": { en: "A 90-second game", bm: "Permainan 90 saat" },
   "hv.h2": { en: "Build your <span class=\"serif-i\">hive</span>", bm: "Bina <span class=\"serif-i\">sarang lebah anda</span>" },
