@@ -58,26 +58,6 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
 
       S.listItem()
-        .title('Assessment responses')
-        .child(
-          S.documentTypeList('assessmentResponse')
-            .title('Assessment responses')
-            .defaultOrdering([{ field: 'submittedAt', direction: 'desc' }]),
-        ),
-
-      S.listItem()
-        .title('Mentorship interest')
-        .child(
-          S.documentTypeList('mentorshipInterest')
-            .title('Mentorship interest')
-            .defaultOrdering([{ field: 'submittedAt', direction: 'desc' }]),
-        ),
-
-      S.listItem().title('Accounts').child(S.documentTypeList('user').title('Accounts')),
-
-      S.divider(),
-
-      S.listItem()
         .title('Legal pages')
         .child(S.documentTypeList('legalPage').title('Legal pages')),
 

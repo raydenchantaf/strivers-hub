@@ -3,7 +3,6 @@ import { callout, fileDownload, rawHtml, youtube } from './objects';
 import { resource } from './resource';
 import { event } from './event';
 import { assessmentGrade, category } from './taxonomy';
-import { assessmentResponse, mentorshipInterest, user } from './submissions';
 import { legalPage, siteSettings } from './settings';
 import { page, pageItem } from './page';
 
@@ -16,10 +15,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   siteSettings,
   page,
   assessmentGrade,
-  // records written by the site
-  assessmentResponse,
-  mentorshipInterest,
-  user,
   // blocks
   pageItem,
   youtube,
