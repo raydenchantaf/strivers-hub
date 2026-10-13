@@ -1,5 +1,6 @@
 import 'server-only';
-import { Pool } from 'pg';
+import type { Pool } from 'pg';
+import { pool } from '@/lib/db';
 
 /**
  * First-party analytics, storage.
@@ -17,25 +18,8 @@ import { Pool } from 'pg';
  * the event's own small payload. No names, emails, answers or IP addresses.
  */
 
-const url = process.env.DATABASE_URL;
-
-type G = { __shPool?: Pool; __shSchema?: Promise<void> };
+type G = { __shSchema?: Promise<void> };
 const g = globalThis as unknown as G;
-
-export function pool(): Pool | null {
-  if (!url) return null;
-  if (!g.__shPool) {
-    const local = /@(localhost|127\.0\.0\.1)[:/]/.test(url);
-    g.__shPool = new Pool({
-      connectionString: url,
-      max: 4,
-      idleTimeoutMillis: 30_000,
-      ssl: local ? undefined : { rejectUnauthorized: true },
-    });
-    g.__shPool.on('error', (err) => console.error('analytics pool error', err.message));
-  }
-  return g.__shPool;
-}
 
 const SCHEMA = `
 create table if not exists analytics_events (

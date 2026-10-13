@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createSession } from '@/lib/auth/session';
-import { attachResult, createAccount, passwordProblem } from '@/lib/auth/store';
+import { attachResult, claimByEmail, createAccount, passwordProblem } from '@/lib/auth/store';
 
 export const runtime = 'nodejs';
 
@@ -37,17 +37,15 @@ export async function POST(request: Request) {
        session is set, and the visitor is signed in. Losing the link is worth
        reporting, not worth telling them their sign-up failed when it did not.
 
-       `_id` is checked rather than trusted: it arrives from the browser, and
-       it addresses a document we are about to write to. Sanity ids from
-       `create()` are of the form `<uuid>` or `drafts.<uuid>`; nothing else is
-       accepted, so this cannot be pointed at another document type. */
+       The id arrives from the browser, so it is not trusted: it must be a
+       row id, and only a result nobody owns yet can be attached. Earlier
+       anonymous results with the same email are adopted as well. */
     const resultId = typeof body.resultId === 'string' ? body.resultId.trim() : '';
-    if (resultId && /^[A-Za-z0-9._-]{8,64}$/.test(resultId) && !resultId.startsWith('drafts.')) {
-      try {
-        await attachResult(account.id, resultId);
-      } catch (error) {
-        console.error('could not attach the assessment result to the new account', error);
-      }
+    try {
+      if (resultId) await attachResult(account.id, resultId);
+      await claimByEmail(account.id, email);
+    } catch (error) {
+      console.error('could not attach the assessment result to the new account', error);
     }
 
     return NextResponse.json({ ok: true });
