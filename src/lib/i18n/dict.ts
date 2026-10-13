@@ -349,6 +349,7 @@ export const dict: Record<string, Localised> = {
   "up.errShort": { en: "Your password needs at least 10 characters.", bm: "Kata laluan anda perlu sekurang-kurangnya 10 aksara." },
   "up.errSimple": { en: "Please include both letters and numbers.", bm: "Sila gunakan gabungan huruf dan nombor." },
   "up.errGeneric": { en: "Something went wrong. Please try again in a moment.", bm: "Sesuatu tidak kena. Sila cuba sebentar lagi." },
+  "up.errTooMany": { en: "Too many attempts. Please wait a few minutes and try again.", bm: "Terlalu banyak cubaan. Sila tunggu beberapa minit dan cuba lagi." },
   "up.forgot": { en: "Forgot your password?", bm: "Lupa kata laluan anda?" },
 
   "pw.eyebrow": { en: "Account access", bm: "Akses akaun" },

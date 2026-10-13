@@ -5,6 +5,7 @@ import { bandOf, readableById, scoreOf } from '@/lib/assessment/scoring';
 import { getBands } from '@/lib/assessment/grades';
 import type { Answers } from '@/lib/assessment/types';
 import { saveSubmission } from '@/lib/submissions';
+import { LIMITS, clientIp, hit, tooMany } from '@/lib/ratelimit';
 
 export const runtime = 'nodejs';
 
@@ -60,6 +61,8 @@ export async function POST(request: Request) {
   const answers = cleanAnswers(body.answers);
   const otherTexts = cleanTexts(body.otherTexts);
   if (!answers.q1) return NextResponse.json({ ok: false, error: 'NO_ANSWERS' }, { status: 400 });
+  const limit = await hit(LIMITS.assessmentIp, clientIp(request));
+  if (!limit.ok) return tooMany(limit);
 
   const language = body.language === 'en' ? 'en' : 'bm';
   const score = scoreOf(answers);

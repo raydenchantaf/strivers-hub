@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createSession } from '@/lib/auth/session';
 import { attachResult, claimByEmail, createAccount, passwordProblem } from '@/lib/auth/store';
+import { LIMITS, clientIp, hit, tooMany } from '@/lib/ratelimit';
 
 export const runtime = 'nodejs';
 
@@ -17,6 +18,10 @@ export async function POST(request: Request) {
   }
   const weak = passwordProblem(password);
   if (weak) return NextResponse.json({ ok: false, error: weak }, { status: 400 });
+
+  /* counted only once the form itself is valid, so typos cost nothing */
+  const limit = await hit(LIMITS.registerIp, clientIp(request));
+  if (!limit.ok) return tooMany(limit);
 
   const [firstName, ...rest] = name.split(/\s+/);
   try {

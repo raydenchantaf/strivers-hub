@@ -10,6 +10,7 @@ const ERRORS: Record<string, string> = {
   INVALID: 'pr.errCurrent',
   TOO_SHORT: 'up.errShort',
   TOO_SIMPLE: 'up.errSimple',
+  TOO_MANY: 'up.errTooMany',
 };
 
 export type ProfileData = {
@@ -55,7 +56,7 @@ export function ProfileView({ data }: { data: ProfileData }) {
         window.scrollTo({ top: 0 });
         return;
       }
-      setDelError(json.error === 'INVALID' ? 'pr.errCurrent' : 'up.errGeneric');
+      setDelError(ERRORS[json.error ?? ''] ?? 'up.errGeneric');
     } catch {
       setDelError('up.errGeneric');
     } finally {

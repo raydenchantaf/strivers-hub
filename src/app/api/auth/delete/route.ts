@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { clearSession, readSession } from '@/lib/auth/session';
 import { deleteAccount, verify } from '@/lib/auth/store';
+import { LIMITS, hit, tooMany } from '@/lib/ratelimit';
 
 export const runtime = 'nodejs';
 
@@ -15,6 +16,8 @@ export async function POST(request: Request) {
 
   const { password } = (await request.json().catch(() => ({}))) as { password?: string };
   if (!password) return NextResponse.json({ ok: false, error: 'MISSING' }, { status: 400 });
+  const limit = await hit(LIMITS.accountAction, session.sub);
+  if (!limit.ok) return tooMany(limit);
 
   const account = await verify(session.email, password);
   if (!account || account.id !== session.sub) {

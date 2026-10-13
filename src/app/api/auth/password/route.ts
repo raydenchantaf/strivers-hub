@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readSession } from '@/lib/auth/session';
 import { changePassword } from '@/lib/auth/store';
+import { LIMITS, hit, tooMany } from '@/lib/ratelimit';
 
 export const runtime = 'nodejs';
 
@@ -15,6 +16,8 @@ export async function POST(request: Request) {
   if (!current || !next) {
     return NextResponse.json({ ok: false, error: 'MISSING' }, { status: 400 });
   }
+  const limit = await hit(LIMITS.accountAction, session.sub);
+  if (!limit.ok) return tooMany(limit);
 
   const result = await changePassword(session.sub, current, next);
   if (!result.ok) {

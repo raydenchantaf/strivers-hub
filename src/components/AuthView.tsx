@@ -14,6 +14,7 @@ const ERRORS: Record<string, string> = {
   BAD_EMAIL: 'up.errEmail',
   TOO_SHORT: 'up.errShort',
   TOO_SIMPLE: 'up.errSimple',
+  TOO_MANY: 'up.errTooMany',
 };
 
 export function AuthView({ mode }: { mode: Mode }) {

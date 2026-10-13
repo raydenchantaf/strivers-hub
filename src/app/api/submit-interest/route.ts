@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { saveMentorship } from '@/lib/submissions';
+import { LIMITS, clientIp, hit, tooMany } from '@/lib/ratelimit';
 
 export const runtime = 'nodejs';
 
@@ -23,6 +24,8 @@ export async function POST(request: Request) {
   if (!firstName) {
     return NextResponse.json({ ok: false, error: 'NO_NAME' }, { status: 400 });
   }
+  const limit = await hit(LIMITS.interestIp, clientIp(request));
+  if (!limit.ok) return tooMany(limit);
 
   try {
     await saveMentorship({

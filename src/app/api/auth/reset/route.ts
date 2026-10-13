@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createSession } from '@/lib/auth/session';
 import { completeReset } from '@/lib/auth/store';
+import { LIMITS, clientIp, hit, tooMany } from '@/lib/ratelimit';
 
 export const runtime = 'nodejs';
 
@@ -15,6 +16,8 @@ export async function POST(request: Request) {
   if (!token || !password) {
     return NextResponse.json({ ok: false, error: 'MISSING' }, { status: 400 });
   }
+  const limit = await hit(LIMITS.resetIp, clientIp(request));
+  if (!limit.ok) return tooMany(limit);
 
   const result = await completeReset(token, password);
   if (!result.ok) {

@@ -14,6 +14,7 @@ const ERRORS: Record<string, string> = {
   TOO_SIMPLE: 'up.errSimple',
   BAD_TOKEN: 'pw.errToken',
   EXPIRED: 'pw.errToken',
+  TOO_MANY: 'up.errTooMany',
 };
 
 /**

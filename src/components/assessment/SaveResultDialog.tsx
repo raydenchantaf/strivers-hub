@@ -115,6 +115,7 @@ export function SaveResultDialog({
           TOO_SHORT: 'up.errShort',
           TOO_SIMPLE: 'up.errSimple',
           ACCOUNT_EXISTS: 'keep.errExists',
+          TOO_MANY: 'up.errTooMany',
         }[json.error ?? ''] ?? 'up.errGeneric',
       );
     } catch {
