@@ -1,0 +1,94 @@
+import type { Metadata } from 'next';
+import { alternates, localeOf } from '@/lib/i18n/routing';
+import { cookies } from 'next/headers';
+import { ResultsView } from './ResultsView';
+import { readSession } from '@/lib/auth/session';
+import { sanityFetch } from '@/sanity/client';
+import { getAllArticles, toView } from '@/lib/content';
+import { bandOf, MAX_SCORE } from '@/lib/assessment/scoring';
+import { getBands } from '@/lib/assessment/grades';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+  title: 'Your assessment result',
+  // Nothing here is the same for two visitors, and half of it is personal.
+  robots: { index: false, follow: false },
+    alternates: alternates('/results', localeOf(`/${locale}`)),
+  };
+}
+
+const LATEST_RESULT = `*[_type == "assessmentResponse" && email == $email]
+  | order(submittedAt desc)[0]{ score, submittedAt }`;
+
+/**
+ * The result as its own page, so it can be returned to, linked from the
+ * dashboard, and read after the tool has been closed.
+ *
+ * It is guarded. The live platform renders this route for anyone who asks:
+ * with no score in hand the value falls back to zero, zero sits below the
+ * lowest band, and the page confidently tells a first-time visitor they are
+ * an Aspiring entrepreneur. Here, no score means no result - the page says
+ * so and points at the assessment instead.
+ */
+export default async function Page() {
+  const session = await readSession();
+
+  let score: number | null = null;
+  let takenAt: string | null = null;
+
+  if (session) {
+    const row = await sanityFetch<{ score?: number; submittedAt?: string } | null>(LATEST_RESULT, {
+      params: { email: session.email },
+      revalidate: 0,
+    }).catch(() => null);
+    if (typeof row?.score === 'number') {
+      score = row.score;
+      takenAt = row.submittedAt ?? null;
+    }
+  }
+
+  /* Anyone who has just finished the tool without registering has the score
+     in a cookie. Range-checked rather than trusted: it is a client value. */
+  if (score === null) {
+    const raw = (await cookies()).get('sh_result')?.value;
+    const parsed = raw === undefined ? NaN : Number(raw);
+    if (Number.isInteger(parsed) && parsed >= 0 && parsed <= MAX_SCORE) {
+      score = parsed;
+    }
+  }
+
+  if (score === null) {
+    return <ResultsView band={null} score={null} takenAt={null} recommended={[]} />;
+  }
+
+  const list = await getBands();
+  const band = bandOf(score, list);
+  const wanted: Record<string, string[]> = {
+    Aspiring: ['Digital Skills', 'Digital Presence', 'Business Growth', 'Legal'],
+    Managing: ['Operations & Productivity', 'Marketing & Branding', 'Customer Retention', 'Finance'],
+    Growing: ['Strategic Growth', 'Partnership', 'ESG', 'Networking'],
+  };
+  const preferred = wanted[band.key.en] ?? [];
+  const ranked = (await getAllArticles())
+    .filter((a) => a.kind === 'resource')
+    .sort((a, b) => {
+      const sa = a.categories.filter((c) => preferred.includes(c.en)).length;
+      const sb = b.categories.filter((c) => preferred.includes(c.en)).length;
+      if (sa !== sb) return sb - sa;
+      return (b.publishedAt || '').localeCompare(a.publishedAt || '');
+    });
+
+  return (
+    <ResultsView
+      band={band}
+      score={score}
+      takenAt={takenAt}
+      recommended={ranked.slice(0, 3).map(toView)}
+    />
+  );
+}

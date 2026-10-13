@@ -1,0 +1,21 @@
+node_modules
+.next
+out
+.env
+.env.local
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+.vercel
+.turbo
+.claude
+
+# Written by tooling, not by this project
+AGENTS.md
+CLAUDE.md
+
+# The wireframe deliverable, kept on the preview host so the link already
+# sent still resolves. It is not part of the platform and must not be
+# served from strivershub.com. (scripts/package.ps1 leaves it out too.)
+public/wireframes.html

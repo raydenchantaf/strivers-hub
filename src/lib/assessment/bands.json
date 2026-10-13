@@ -1,0 +1,95 @@
+[
+  {
+    "key": {
+      "en": "Aspiring",
+      "bm": "Aspiring"
+    },
+    "title": {
+      "en": "You are an Aspiring entrepreneur!",
+      "bm": "Anda seorang usahawan Aspiring!"
+    },
+    "desc": {
+      "en": "Hey there, aspiring entrepreneur! It's awesome to see your motivation as an entrepreneur. You've identified one or more industries/services/products to venture into, which is a great starting point. Beyond passion and ideas, success in entrepreneurship requires sustainable strategies. This is why many small businesses don't make it past the first few years of being launched due to burnout as the passion runs out.\n\nJust like building a house, you need a solid foundation and careful planning to ensure your business survives through any weather in the long run. Gain skills in financial management, marketing and sales, operations and human resources, and improve your online presence. We've got your back with the right training and resources to help you strive and thrive.",
+      "bm": "Hai bakal usahawan! Motivasi anda sebagai seorang usahawan amat mengagumkan. Anda telah mengenal pasti sekurang-kurang satu atau lebih industri/perkhidmatan/produk untuk diterokai. Ini merupakan titik permulaan yang hebat. Selain daripada semangat dan idea, kejayaan dalam keusahawanan memerlukan strategi yang mampan.\n\nSeperti dalam pembinaan rumah, anda perlu memastikan bahawa perniagaan anda mempunyai asas yang kukuh dan perancangan yang teliti. Justeru, ia adalah sangat penting bagi anda untuk mempelajari kemahiran dalam pengurusan kewangan, pemasaran dan jualan, operasi dan sumber manusia, serta tingkatkan kehadiran perniagaan anda dalam talian."
+    },
+    "steps": {
+      "en": [
+        "Complete free training modules on business basics and registration",
+        "Build your online presence on social media platforms",
+        "Learn financial management fundamentals for entrepreneurs",
+        "Connect with a Strivers' Hub mentor for personalised guidance"
+      ],
+      "bm": [
+        "Lengkapkan modul latihan percuma tentang asas perniagaan dan pendaftaran",
+        "Bina kehadiran dalam talian anda di platform media sosial",
+        "Pelajari asas pengurusan kewangan untuk usahawan",
+        "Hubungi mentor Strivers' Hub untuk panduan peribadi"
+      ]
+    },
+    "color": "#F59E0B",
+    "min": 6,
+    "max": 10
+  },
+  {
+    "key": {
+      "en": "Managing",
+      "bm": "Managing"
+    },
+    "title": {
+      "en": "You are a Managing entrepreneur!",
+      "bm": "Anda seorang usahawan Managing!"
+    },
+    "desc": {
+      "en": "You're on the right path! You've taken that first step and brought your business idea to life.\n\nRight now, it's all about setting up effective structures and fine-tuning operations to ensure you're running like a well-oiled machine. To future-proof your business, leveling up your knowledge is a must. You've built your house, but let's make the foundations stronger with renovations and improvements. Equip yourself with knowledge in cybersecurity, digital payments, customer engagement, and marketing to propel yourself to the next level.",
+      "bm": "Anda berada di jalan yang betul! Anda telah mengambil langkah pertama untuk merealisasikan idea perniagaan anda.\n\nSekarang, tumpuan anda adalah untuk membentuk struktur yang berkesan dan meningkatkan operasi bagi memastikan perniagaan terus berjalan dengan lancar. Anda telah membina asas perniagaan anda, namun mari kita teguhkan lagi asas tersebut dengan penyesuaian dan penambahbaikan. Lengkapkan diri anda dengan pengetahuan dalam keselamatan siber, pembayaran digital, penglibatan pelanggan, dan pemasaran."
+    },
+    "steps": {
+      "en": [
+        "Attend digital marketing and customer engagement workshops",
+        "Set up a proper financial management and accounting system",
+        "Explore government grants and SME funding programs",
+        "Join the Strivers' Hub entrepreneur community for peer support"
+      ],
+      "bm": [
+        "Hadiri bengkel pemasaran digital dan penglibatan pelanggan",
+        "Sediakan sistem pengurusan kewangan dan perakaunan yang betul",
+        "Terokai geran kerajaan dan program pembiayaan PKS",
+        "Sertai komuniti usahawan Strivers' Hub untuk sokongan rakan sebaya"
+      ]
+    },
+    "color": "#3B82F6",
+    "min": 11,
+    "max": 15
+  },
+  {
+    "key": {
+      "en": "Growing",
+      "bm": "Growing"
+    },
+    "title": {
+      "en": "You are a Growing entrepreneur!",
+      "bm": "Anda seorang usahawan Growing!"
+    },
+    "desc": {
+      "en": "You are a fighter! Your grit and determination have kept your business afloat through thick and thin. You've got loyal customers and clients who trust you. You have built a beautiful home with a strong foundation and structure. But let's take it a step further and see how we can decorate your house even more.\n\nWe welcome you to refresh your skills and network with like-minded entrepreneurs. Don't be afraid to push the limits and embrace digital solutions to take your business to new heights. Scale up and expand!",
+      "bm": "Anda adalah seorang pejuang! Ketegasan dan keazaman anda telah memastikan perniagaan anda terus bergerak maju walaupun dalam situasi yang mencabar. Anda mempunyai pelanggan dan klien yang setia serta mempercayai anda. Anda telah membina sebuah rumah yang indah dengan asas yang kukuh.\n\nKami mengalu-alukan anda untuk menyegarkan kemahiran anda dan menjalin hubungan dengan usahawan yang bersefikiran. Jangan rasa ragu untuk mencabar diri dan menerima penyelesaian digital untuk membawa perniagaan anda ke peringkat yang lebih tinggi."
+    },
+    "steps": {
+      "en": [
+        "Attend advanced networking events and strategic partnership forums",
+        "Explore digital tools and automation to scale your operations",
+        "Consider mentoring aspiring entrepreneurs in the community",
+        "Explore new market expansion and export opportunities"
+      ],
+      "bm": [
+        "Hadiri acara rangkaian lanjutan dan forum perkongsian strategik",
+        "Terokai alat digital dan automasi untuk meningkatkan operasi anda",
+        "Pertimbangkan untuk membimbing usahawan baharu dalam komuniti",
+        "Terokai pengembangan pasaran baharu dan peluang eksport"
+      ]
+    },
+    "color": "#10B981",
+    "min": 16,
+    "max": 18
+  }
+]
