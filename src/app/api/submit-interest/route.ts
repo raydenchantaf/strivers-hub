@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { writeClient } from '@/sanity/client';
+import { saveMentorship } from '@/lib/submissions';
 
 export const runtime = 'nodejs';
 
 const str = (v: unknown, max = 200) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Mentorship waiting list. */
+/** Mentorship waiting list, in TAF's `mentorship_signups` table. */
 export async function POST(request: Request) {
   let body: Record<string, unknown>;
   try {
@@ -19,16 +19,17 @@ export async function POST(request: Request) {
   if (!EMAIL.test(email)) {
     return NextResponse.json({ ok: false, error: 'BAD_EMAIL' }, { status: 400 });
   }
+  const firstName = str(body.firstName, 80);
+  if (!firstName) {
+    return NextResponse.json({ ok: false, error: 'NO_NAME' }, { status: 400 });
+  }
 
   try {
-    await writeClient().create({
-      _type: 'mentorshipInterest',
-      submittedAt: new Date().toISOString(),
-      firstName: str(body.firstName, 80),
+    await saveMentorship({
+      firstName,
       lastName: str(body.lastName, 80),
       email,
       phone: str(body.phone, 40),
-      language: str(body.language, 4) || 'bm',
     });
   } catch (error) {
     console.error('interest write failed', error);
