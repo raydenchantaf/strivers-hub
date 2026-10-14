@@ -20,7 +20,7 @@ import { DEFAULT_LOCALE, LANG_TO_LOCALE, LOCALES, isLocale } from '@/lib/i18n/ty
  * and builds warn on the old name. Same runtime, same matcher, same edge.
  */
 
-const PASS = /^\/(_next|api|studio|insights|img|favicon|icon-|apple-touch-icon|manifest|robots|sitemap|\.well-known)/;
+const PASS = /^\/(_next|api|studio|insights|admin|img|favicon|icon-|apple-touch-icon|manifest|robots|sitemap|\.well-known)/;
 
 /**
  * A dot in the last segment means a file, not a page.
@@ -56,7 +56,7 @@ export const config = {
   matcher: [
     /* everything except the files and routes that have no locale: static
        assets, the API, the Studio, and the crawler files at the root */
-    '/((?!_next/|api/|studio|insights|img/|favicon|icon-|apple-touch-icon|manifest|robots.txt|sitemap.xml).*)',
+    '/((?!_next/|api/|studio|insights|admin|img/|favicon|icon-|apple-touch-icon|manifest|robots.txt|sitemap.xml).*)',
   ],
 };
 

@@ -2847,3 +2847,47 @@ a:hover .more .arw,.lead:hover .more .arw{transform:translateX(4px)}
 .ins-login-note{font-size:14px;color:var(--ink-2)}
 .ins-login .ins-by{margin-top:20px;justify-content:center;width:100%}
 @media(max-width:700px){.ins-title{display:none}.ins-right .ins-by{display:none}}
+
+/* ============ ADMIN (/admin) ============
+   Shares the insights dashboard's frame and panels; these are the extras for
+   tables of people, filters and the data-request tools. */
+.adm-tabs{margin-left:0}
+.adm-tabs a{white-space:nowrap}
+.adm-who{font-size:12.5px;color:var(--muted);font-weight:600}
+.adm-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:900px){.adm-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.adm-filter,.adm-export{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 14px;margin-bottom:14px}
+.adm-filter label,.adm-export label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.adm-filter input,.adm-filter select,.adm-export input,.adm-export select{
+  font:inherit;font-size:14px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink);
+  padding:8px 10px;border-radius:9px;border:1px solid var(--line-2);background:#fff;min-width:0;
+}
+.adm-filter input[name="q"]{width:220px}
+.adm-filter input[type="email"]{width:min(360px,100%)}
+.adm-clear,.adm-dl{font-size:13px;font-weight:700;color:var(--plum);text-decoration:underline;text-underline-offset:3px;padding-bottom:9px}
+.adm-dl{margin-left:auto}
+.adm-count{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+.adm-scroll{overflow-x:auto}
+.adm-table{min-width:760px}
+.adm-table td{vertical-align:top}
+.adm-table .nowrap{white-space:nowrap}
+.adm-table a{color:var(--plum);font-weight:700}
+.adm-table code{font-size:11.5px;word-break:break-word}
+.adm-pager{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:13px}
+.adm-pager a{color:var(--plum);font-weight:700}
+.adm-dl-list{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:10px 0 16px;font-size:13.5px}
+.adm-dl-list dt{font-weight:700;color:var(--ink-2)}
+.adm-dl-list dd{margin:0}
+.adm-qa{display:contents}
+.adm-answers{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 10px;background:#FBF8F7}
+.adm-answers summary{cursor:pointer;font-weight:700;font-size:13.5px}
+.adm-danger{margin-top:22px;padding:16px 18px;border:1px solid rgba(180,52,26,.35);border-radius:14px;background:#FFF7F4}
+.adm-danger h3{margin:0 0 6px;font-size:15px;color:#B4341A}
+.adm-danger p{margin:0 0 12px;font-size:13px;color:var(--ink-2)}
+.adm-danger label{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.adm-row{display:flex;gap:10px;flex-wrap:wrap}
+.adm-row input{flex:1 1 240px;font:inherit;padding:9px 12px;border-radius:10px;border:1px solid var(--line-2)}
+.adm-btn-danger{background:#B4341A;color:#fff;border:0}
+.adm-btn-danger:disabled{opacity:.45;cursor:not-allowed}
+.adm-done{padding:14px 16px;border-radius:12px;background:#EEF7F1;color:#1D6B45;font-weight:600;font-size:13.5px}
+.ins-login-card label + input{margin-bottom:12px}

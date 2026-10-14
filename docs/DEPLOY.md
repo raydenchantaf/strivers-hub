@@ -22,6 +22,7 @@ the host for production.
 | `NEXT_PUBLIC_GA_ID` | no | Leave blank and no analytics script is loaded at all |
 | `DATABASE_URL` | for analytics | Postgres (Neon). Holds the first-party analytics table, created on first use. Blank: nothing is recorded. |
 | `INSIGHTS_PASSWORD` | for `/insights` | Password for the team's analytics dashboard. Blank: the dashboard stays closed. |
+| `ADMIN_EMAILS` | for `/admin` | Comma-separated emails of site accounts allowed into the admin area (people data, Excel export, data requests). Blank: nobody can open it. |
 | `REVALIDATE_SECRET` | no | Shared secret for the Sanity webhook |
 | `RESEND_API_KEY` | no | Turns password-reset delivery on. Without it the reset still works and the message goes to the server log. |
 | `MAIL_FROM` | with Resend | e.g. `Strivers' Hub <no-reply@strivershub.com>` |

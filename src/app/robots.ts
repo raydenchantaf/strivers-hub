@@ -33,8 +33,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        // the Studio, the account area and the API are not for crawlers
-        disallow: ['/studio', '/dashboard', '/api/'],
+        // the Studio, the account area, the team's dashboards and the API are not for crawlers
+        disallow: ['/studio', '/dashboard', '/admin', '/insights', '/api/'],
       },
     ],
     sitemap: `${base}/sitemap.xml`,

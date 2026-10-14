@@ -155,4 +155,6 @@ export const LIMITS = {
   assessmentIp: { scope: 'assessment-ip', max: 30, windowSec: HOUR },
   interestIp: { scope: 'interest-ip', max: 10, windowSec: HOUR },
   insightsIp: { scope: 'insights-ip', max: 10, windowSec: 10 * MIN },
+  /** exports and data-request actions by one administrator */
+  adminExport: { scope: 'admin-export', max: 60, windowSec: 15 * MIN },
 } satisfies Record<string, Rule>;
