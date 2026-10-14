@@ -88,9 +88,9 @@ docs.push({
   ],
 });
 
-const privacy = require('../src/app/(site)/privacy-policy/privacy.seed.json');
+const privacy = require('../src/app/[locale]/(site)/privacy-policy/privacy.seed.json');
 docs.push({
-  _id: 'legalPage.privacy',
+  _id: 'legalPage-privacy',
   _type: 'legalPage',
   title_en: 'Privacy Policy',
   title_bm: 'Dasar Privasi',
@@ -144,7 +144,9 @@ for (const b of bands) {
   if (match) {
     gradePatches.push({ id: match._id, set: copy, had: typeof match.min === 'number' });
   } else {
-    docs.push({ _id: `assessmentGrade.${key}`, _type: 'assessmentGrade', ...copy });
+    /* no dot in the id: Sanity keeps dotted ids private, and the site reads
+       without a token, so a dotted document would never reach the page */
+    docs.push({ _id: `assessmentGrade-${key}`, _type: 'assessmentGrade', ...copy });
   }
 }
 
