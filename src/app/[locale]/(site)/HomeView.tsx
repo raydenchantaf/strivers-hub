@@ -293,7 +293,7 @@ export function HomeView({
               <div className="hero-slab" aria-hidden="true" />
               <div className="hero-frame">
                 <Image
-                  src="/img/hero.webp"
+                  src="/img/hero-welcome.webp"
                   alt={t('hero.imgAlt')}
                   width={860}
                   height={1075}

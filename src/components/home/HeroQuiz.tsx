@@ -51,6 +51,8 @@ export function HeroQuiz() {
           otherTexts: {},
           fieldValues: {},
           consented: false,
+          /* the tool steps over these on the way forward */
+          prefilled: Object.keys(answers),
         }),
       );
     } catch {

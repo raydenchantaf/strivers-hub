@@ -816,7 +816,10 @@ export function InsightsView({ data, range, error }: { data: Insights | null; ra
             />
           </Panel>
 
-          <Panel title="Where visitors come from" sub="Other websites that sent people here.">
+          <Panel title="Where visitors come from" sub="Other websites that sent people here, and campaign tags on the links they followed.">
+            <p className="ins-small" style={{ margin: '0 0 14px' }}>
+              From Rakyat Digital: <b className="tnum">{fmt(data.rakyat)}</b> visits
+            </p>
             <Bars rows={data.refs.map((r) => ({ label: r.key, n: r.n }))} />
           </Panel>
         </div>

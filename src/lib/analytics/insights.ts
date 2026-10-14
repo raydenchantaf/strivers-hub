@@ -45,6 +45,8 @@ export type Insights = {
   devices: Count[];
   langs: Count[];
   refs: Count[];
+  /** first-page visits referred by Rakyat Digital, by referrer or campaign tag (tier 1) */
+  rakyat: number;
   helper: Count[];
   partners: Count[];
   loader: number;
@@ -138,8 +140,8 @@ export async function load(range: Range): Promise<Insights | null> {
        where type = 'pv' and ${WINDOW} group by 1 order by n desc`),
     c(`select lang as key, count(distinct vid) as n from analytics_events
        where type = 'pv' and ${WINDOW} group by 1 order by n desc`),
-    c(`select data->>'ref' as key, count(*) as n from analytics_events
-       where type = 'pv' and data ? 'ref' and ${WINDOW} group by 1 order by n desc limit 8`),
+    c(`select coalesce(nullif(data->>'src', ''), data->>'ref') as key, count(*) as n from analytics_events
+       where type = 'pv' and (data ? 'ref' or data ? 'src') and ${WINDOW} group by 1 order by n desc limit 8`),
     c(`select data->>'a' as key, count(*) as n from analytics_events
        where type = 'mascot' and ${WINDOW} group by 1`),
     c(`select data->>'label' as key, count(*) as n from analytics_events
@@ -210,6 +212,10 @@ export async function load(range: Range): Promise<Insights | null> {
 
   const [{ n: loader }] = await q<{ n: unknown }>(`
     select count(*) as n from analytics_events where type = 'loader' and ${WINDOW}`);
+  const [{ n: rakyat }] = await q<{ n: unknown }>(`
+    select count(*) as n from analytics_events
+    where type = 'pv' and ${WINDOW}
+      and (data->>'ref' ilike '%rakyatdigital%' or data->>'src' ilike '%rakyat%')`);
 
   return {
     range,
@@ -255,6 +261,7 @@ export async function load(range: Range): Promise<Insights | null> {
     helper,
     partners,
     loader: num(loader),
+    rakyat: num(rakyat),
     heatPages,
   };
 }

@@ -110,8 +110,15 @@ export function Footer() {
           </div>
         </div>
         <div className="foot-bot">
-          <span>&copy; 2024&ndash;{year} Strivers&#8217; Hub</span>
-          <Link href="/privacy-policy">{t('foot.legal')}</Link>
+          <span className="foot-legal">
+            <span>&copy; 2024&ndash;{year} Strivers&#8217; Hub</span>
+            <Link href="/privacy-policy">{t('foot.legal')}</Link>
+          </span>
+          {/* the builder's credit: last thing on the page, small, not a link */}
+          <span className="foot-by">
+            <span>{t('nav.by')}</span>
+            <Image src="/img/unbound-light.webp" alt="UnBound" width={480} height={117} />
+          </span>
         </div>
       </div>
     </footer>

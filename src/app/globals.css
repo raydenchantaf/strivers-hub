@@ -131,25 +131,11 @@ a{color:inherit;text-decoration:none}
    kept - that one sits over the page with nothing opaque in front of it, and
    it does show. */
 .nav-in{display:flex;align-items:center;gap:18px;height:78px}
-/* The logo leads the bar; the builder's credit sits under the wordmark,
-   indented to where the words start (about 24% in, past the hexagon), so it
-   reads as a footnote to the mark rather than a second logo. Sized by the
-   viewport on phones, where the bar also holds the language switch and menu. */
-.nav-brand{display:flex;flex-direction:column;align-items:flex-start;gap:2px;flex:none;--lw:clamp(124px,40vw,196px)}
+/* The logo leads the bar. Sized by the viewport on phones, where the bar
+   also holds the language switch and menu. */
+.nav-brand{display:flex;align-items:center;flex:none;--lw:clamp(124px,40vw,196px)}
 .nav-logo{display:block;line-height:0}
 .nav-logo img{width:var(--lw);height:auto}
-.nav-by{
-  display:inline-flex;align-items:center;gap:5px;margin-left:calc(var(--lw) * .245);
-  font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);line-height:1;
-}
-.nav-by img{width:50px;height:auto;opacity:.82}
-/* On the narrowest phones the Malay credit ("Dikuasakan oleh") is wider than
-   the logo above it; it drops the indent and shrinks a little so the bar
-   still fits beside the language switch and the menu. */
-@media(max-width:380px){
-  .nav-by{margin-left:0;font-size:7px;gap:4px}
-  .nav-by img{width:42px}
-}
 .nav-links{display:none;gap:2px;margin-left:6px}
 /* The full row of links needs about 1124px of bar: the logo (196), six links
    (557), the language switch and two account buttons (335) and the gaps
@@ -837,8 +823,15 @@ h2.sec-h .serif-i{font-weight:400;color:var(--magenta);font-size:1.08em;letter-s
 .foot ul a:hover{color:#fff}
 .foot-bot{
   margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,246,241,.12);
-  display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;font-size:13px;
+  display:flex;flex-wrap:wrap;gap:14px 24px;justify-content:space-between;align-items:center;font-size:13px;
 }
+.foot-legal{display:flex;flex-wrap:wrap;gap:6px 24px}
+/* the builder's credit, at the very foot of the page (TAF, 13 Oct) */
+.foot-by{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,246,241,.55);
+}
+.foot-by img{width:74px;height:auto;opacity:.8}
 
 /* ============ ASSESSMENT PAGE ============ */
 .as-hero{padding:clamp(44px,6vw,84px) 0 0}

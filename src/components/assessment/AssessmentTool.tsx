@@ -30,6 +30,9 @@ type Saved = {
   otherTexts: Record<string, string>;
   fieldValues: Record<string, string>;
   consented: boolean;
+  /** questions already answered on the homepage, which the tool steps over
+     on the way forward (Back still reaches them) */
+  prefilled?: string[];
 };
 
 /**
@@ -92,6 +95,7 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
   const [answers, setAnswers] = useState<Answers>({});
   const [otherTexts, setOtherTexts] = useState<Record<string, string>>({});
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+  const [prefilled, setPrefilled] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; bandIndex: number } | null>(null);
   const [restored, setRestored] = useState(false);
@@ -142,6 +146,7 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
         if (s.answers) setAnswers(s.answers);
         if (s.otherTexts) setOtherTexts(s.otherTexts);
         if (s.fieldValues) setFieldValues(s.fieldValues);
+        if (Array.isArray(s.prefilled)) setPrefilled(s.prefilled.filter((id) => typeof id === 'string'));
         if (Array.isArray(s.history)) setHistory(s.history);
         if (s.currentId && questions[s.currentId]) setCurrentId(s.currentId);
         if (s.consented) {
@@ -174,6 +179,7 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
             otherTexts: {},
             fieldValues: {},
             consented: true,
+            prefilled: [],
           } satisfies Saved),
         );
         return;
@@ -185,12 +191,13 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
         otherTexts,
         fieldValues,
         consented: phase !== 'consent',
+        prefilled,
       };
       sessionStorage.setItem(PROGRESS_KEY, JSON.stringify(payload));
     } catch {
       /* ignore */
     }
-  }, [restored, currentId, history, answers, otherTexts, fieldValues, phase]);
+  }, [restored, currentId, history, answers, otherTexts, fieldValues, phase, prefilled]);
 
   const q = questions[currentId];
   const value = answers[currentId];
@@ -297,9 +304,31 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
     }
     const target = q.type === 'multi-text' ? q.next : nextIdFor(q, value);
     handOver(currentId);
-    setHistory((h) => [...h, currentId]);
-    setCurrentId(target);
+    landOn(target, [...history, currentId]);
     scrollToPanel();
+  }
+
+  /**
+   * Moves to `target`, stepping over any question already answered on the
+   * homepage. The ones stepped over go into the history, so Back still
+   * reaches them and the visitor can change an answer; once passed they are
+   * ordinary questions again.
+   */
+  function landOn(target: string, hist: string[]) {
+    let id = target;
+    const passed: string[] = [];
+    while (
+      prefilled.includes(id) &&
+      questions[id] &&
+      questions[id].next !== '[END]' &&
+      isAnswered(questions[id], answers[id], otherTexts[id] ?? '', fieldValues)
+    ) {
+      passed.push(id);
+      id = nextIdFor(questions[id], answers[id]);
+    }
+    setHistory([...hist, ...passed]);
+    setCurrentId(id);
+    if (passed.length) setPrefilled((p) => p.filter((x) => !passed.includes(x)));
   }
 
   function back() {
@@ -330,6 +359,7 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
     setAnswers({});
     setOtherTexts({});
     setFieldValues({});
+    setPrefilled([]);
     setHistory([]);
     setCurrentId(FIRST_QUESTION);
     setResult(null);
@@ -426,6 +456,9 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
               disabled={!agreed}
               onClick={() => {
                 setPhase('quiz');
+                /* arriving from the homepage: start at the first question
+                   not already answered there */
+                if (prefilled.includes(currentId)) landOn(currentId, history);
                 track('quiz', { s: 'start' });
                 scrollToPanel();
               }}

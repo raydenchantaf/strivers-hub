@@ -39,7 +39,11 @@ export function Analytics() {
     visibleMs.current = 0;
     shownAt.current = Date.now();
 
+    /* where the visit came from, on its first page only: the referring site,
+       and a campaign tag if the link carried one (?utm_source=rakyatdigital),
+       which still counts when a browser withholds the referrer */
     let ref = '';
+    let src = '';
     if (first.current) {
       first.current = false;
       try {
@@ -48,9 +52,11 @@ export function Analytics() {
       } catch {
         /* unparseable referrer */
       }
+      const tag = new URLSearchParams(window.location.search).get('utm_source') ?? '';
+      src = tag.toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40);
     }
     const w = window.innerWidth || document.documentElement.clientWidth;
-    track('pv', ref ? { ref, w } : { w });
+    track('pv', { w, ...(ref ? { ref } : {}), ...(src ? { src } : {}) });
   }, [pathname]);
 
   /* time on page only counts while the tab is in front */

@@ -12,8 +12,13 @@ import type { AboutContent } from '@/lib/pages';
  * document field by field and falls back to the bundled dictionary. The
  * arrangement is fixed; the words are not.
  */
+/* Until TAF sets one on the About page in the Studio: their own photo from
+   the SHE TECH Asia forum, already in their Sanity library. */
+const FALLBACK_PHOTO =
+  'https://cdn.sanity.io/images/9znzy5bd/production/55906504529bf9c324b63f9e8cc62f0dc0cc1896-1000x1334.jpg';
+
 export function AboutView({ c }: { c: AboutContent }) {
-  const { lang } = useLang();
+  const { lang, t } = useLang();
 
   return (
     <>
@@ -35,10 +40,10 @@ export function AboutView({ c }: { c: AboutContent }) {
             </div>
             <div className="ab-frame ld ld-3">
               <Image
-                src={c.image?.src ?? '/img/about.webp'}
-                alt={c.image?.alt[lang] ?? ''}
-                width={c.image?.width ?? 760}
-                height={c.image?.height ?? 940}
+                src={c.image?.src ?? FALLBACK_PHOTO}
+                alt={c.image?.alt[lang] ?? t('ab.photoAlt')}
+                width={c.image?.width ?? 1000}
+                height={c.image?.height ?? 1334}
                 priority
               />
             </div>

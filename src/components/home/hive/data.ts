@@ -11,7 +11,8 @@ import type { Localised } from '@/lib/i18n/types';
    carry points. Its twelve options score 1, 2 or 3, and that score is the
    stage - so where a skill goes in the hive is not our opinion, it is how the
    assessment already counts it. The three stage names are the pathway names
-   off the homepage (`path.1t` to `path.3t`). */
+   off the homepage (`path.1t` to `path.3t`): Aspiring, Managing and Growing,
+   kept in English on both language versions, as TAF decided (D3 decision 1). */
 
 export type StageIx = 0 | 1 | 2;
 
@@ -175,7 +176,7 @@ export const FIELD: FieldWord[] = [
 ];
 
 export const TILES: Tile[] = [
-  /* q3b options worth 1 point - Just Starting */
+  /* q3b options worth 1 point - Aspiring */
   {
     id: 'reg',
     stage: 0,
