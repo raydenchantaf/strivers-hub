@@ -122,7 +122,7 @@ sanity.io/manage → API → Webhooks → Create webhook:
 | URL | `https://www.strivershub.com/api/revalidate` |
 | Dataset | `production` |
 | Trigger on | Create, Update, Delete |
-| Filter | `_type == "resource" || _type == "legalPage" || _type == "siteSettings"` |
+| Filter | `_type in ["resource", "category", "event", "page", "legalPage", "siteSettings", "assessmentGrade"]` |
 | Projection | `{ slug }` |
 | HTTP method | POST |
 | HTTP header | `x-revalidate-secret: <your REVALIDATE_SECRET>` |
