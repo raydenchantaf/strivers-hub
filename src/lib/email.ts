@@ -25,9 +25,13 @@ export async function send(mail: Mail): Promise<{ delivered: boolean }> {
     // Never throw: a missing mail account must not turn into a 500 on a form
     // the visitor cannot fix. The caller reports success either way, because
     // saying "no such account" would let the form enumerate who has one.
+    // Only a development machine gets the message itself: in production the
+    // log would hand a working reset link to anyone who can read the logs.
     console.warn(
-      `[mail] RESEND_API_KEY or MAIL_FROM not set - not delivered.\n` +
-        `  to: ${mail.to}\n  subject: ${mail.subject}\n\n${mail.text}\n`,
+      process.env.NODE_ENV === 'production'
+        ? `[mail] RESEND_API_KEY or MAIL_FROM not set - "${mail.subject}" not delivered.`
+        : `[mail] RESEND_API_KEY or MAIL_FROM not set - not delivered.\n` +
+            `  to: ${mail.to}\n  subject: ${mail.subject}\n\n${mail.text}\n`,
     );
     return { delivered: false };
   }
