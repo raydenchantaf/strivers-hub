@@ -17,6 +17,7 @@ export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as { slug?: { current?: string } };
   // Next 16 wants an explicit cache-life profile; 'max' expires the entry
   // immediately on the next request rather than waiting out its own window.
+  revalidateTag('sanity', 'max');
   revalidateTag('resource', 'max');
   if (body?.slug?.current) revalidateTag(`resource:${body.slug.current}`, 'max');
 

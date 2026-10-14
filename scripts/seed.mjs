@@ -16,7 +16,7 @@ const require = createRequire(import.meta.url);
 
 /* .env.local is not loaded outside Next, so read it here */
 try {
-  for (const line of readFileSync('.env.local', 'utf8').split('\n')) {
+  for (const line of readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
     const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
     if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim();
   }
@@ -67,9 +67,9 @@ docs.push({
   _id: 'siteSettings',
   _type: 'siteSettings',
   footerBlurb_en:
-    "Strivers' Hub empowers Malaysian women entrepreneurs by closing the digitalisation gap.",
+    'Strivers’ Hub empowers Malaysian women entrepreneurs by closing the digitalisation gap.',
   footerBlurb_bm:
-    "Strivers' Hub memperkasakan usahawanita Malaysia dengan merapatkan jurang digitalisasi.",
+    'Strivers’ Hub memperkasakan usahawanita Malaysia dengan merapatkan jurang digitalisasi.',
   partners: [
     { _key: 'p1', name: 'The Asia Foundation', url: 'https://asiafoundation.org' },
     {
@@ -80,10 +80,11 @@ docs.push({
     { _key: 'p3', name: 'MyDIGITAL Corporation', url: 'https://mydigital.gov.my' },
   ],
   social: [
-    { _key: 's1', platform: 'Facebook', url: 'https://www.facebook.com/StriversHubMY' },
-    { _key: 's2', platform: 'Instagram', url: 'https://www.instagram.com/strivershub' },
-    { _key: 's3', platform: 'YouTube', url: 'https://www.youtube.com/@strivershub' },
-    { _key: 's4', platform: 'LinkedIn', url: 'https://www.linkedin.com/company/strivers-hub' },
+    /* the links the footer has shown since the rebuild began */
+    { _key: 's1', platform: 'Facebook', url: 'https://www.facebook.com/strivershub/' },
+    { _key: 's2', platform: 'Instagram', url: 'https://www.instagram.com/strivers.hub/' },
+    { _key: 's3', platform: 'YouTube', url: 'https://www.youtube.com/@StriversHUB' },
+    { _key: 's4', platform: 'LinkedIn', url: 'https://www.linkedin.com/company/the-asia-foundation' },
   ],
 });
 

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { L as Link } from '@/components/L';
+import type { Partner, Settings } from '@/lib/settings';
 import { useLang } from './LangProvider';
 
 /* `w`/`h` are each file's own pixels; `width` is how wide it is drawn.
@@ -16,8 +17,25 @@ const PARTNERS = [
   { name: 'MyDIGITAL Corporation', src: '/img/partner-mydigital.webp', w: 240, h: 68, width: 140, href: 'https://mydigital.gov.my' },
 ];
 
-export function PartnerBand() {
+/* Partners set in the Studio (Site settings) replace the built-in list. One
+   without an uploaded logo keeps the built-in logo of the same name, or shows
+   its name as text. */
+function partnersFrom(cms: Partner[] | null) {
+  if (!cms) return PARTNERS;
+  return cms.map((p) => {
+    const known = PARTNERS.find((k) => k.name.toLowerCase() === p.name.toLowerCase());
+    const href = p.url || known?.href || '';
+    if (p.logo) {
+      const width = Math.round(Math.min(290, Math.max(120, (p.logo.width / p.logo.height) * 34)));
+      return { name: p.name, src: p.logo.src, w: p.logo.width, h: p.logo.height, width, href };
+    }
+    return known ? { ...known, href } : { name: p.name, src: '', w: 1, h: 1, width: 0, href };
+  });
+}
+
+export function PartnerBand({ partners: cms = null }: { partners?: Partner[] | null }) {
   const { t } = useLang();
+  const partners = partnersFrom(cms);
   return (
     <section
       className="band band-dark"
@@ -31,10 +49,10 @@ export function PartnerBand() {
           {t('part.eyebrow')}
         </span>
         <div className="partners" style={{ marginTop: 28 }}>
-          {PARTNERS.map((p) => (
+          {partners.map((p) => (
             <a
               key={p.name}
-              href={p.href}
+              href={p.href || undefined}
               target="_blank"
               rel="noopener noreferrer"
               data-track="partner"
@@ -45,13 +63,17 @@ export function PartnerBand() {
               <span className="pt-tip" aria-hidden="true">
                 {t('part.explore')} <b>{p.name}</b> <span className="pt-arrow">&#8599;</span>
               </span>
-              <Image
-                src={p.src}
-                alt={p.name}
-                width={p.width}
-                height={Math.round((p.width * p.h) / p.w)}
-                style={{ width: p.width, height: 'auto' }}
-              />
+              {p.src ? (
+                <Image
+                  src={p.src}
+                  alt={p.name}
+                  width={p.width}
+                  height={Math.round((p.width * p.h) / p.w)}
+                  style={{ width: p.width, height: 'auto' }}
+                />
+              ) : (
+                <span className="partner-name">{p.name}</span>
+              )}
             </a>
           ))}
         </div>
@@ -60,8 +82,38 @@ export function PartnerBand() {
   );
 }
 
-export function Footer() {
-  const { t } = useLang();
+const SOCIAL = [
+  { platform: 'Facebook', url: 'https://www.facebook.com/strivershub/' },
+  { platform: 'Instagram', url: 'https://www.instagram.com/strivers.hub/' },
+  { platform: 'YouTube', url: 'https://www.youtube.com/@StriversHUB' },
+  { platform: 'LinkedIn', url: 'https://www.linkedin.com/company/the-asia-foundation' },
+];
+
+/** A one-line notice above the header, set in the Studio (Site settings). */
+export function Announcement({ a }: { a: NonNullable<Settings['announcement']> }) {
+  const { lang } = useLang();
+  const text = lang === 'en' ? a.en : a.bm;
+  return (
+    <div className="annc" role="note">
+      {a.href ? (
+        <a href={a.href}>
+          {text} <span aria-hidden="true">&#8594;</span>
+        </a>
+      ) : (
+        <span>{text}</span>
+      )}
+    </div>
+  );
+}
+
+export function Footer({
+  blurb = null,
+  social = null,
+}: {
+  blurb?: Settings['blurb'];
+  social?: Settings['social'];
+}) {
+  const { t, lang } = useLang();
   const year = new Date().getFullYear();
   return (
     <footer className="foot">
@@ -76,7 +128,7 @@ export function Footer() {
               height={102}
               style={{ width: 170, height: 'auto' }}
             />
-            <p>{t('foot.blurb')}</p>
+            <p>{blurb ? (lang === 'en' ? blurb.en : blurb.bm) : t('foot.blurb')}</p>
           </div>
           <div>
             <h2>{t('foot.c1')}</h2>
@@ -102,10 +154,13 @@ export function Footer() {
           <div>
             <h2>{t('foot.c3')}</h2>
             <ul>
-              <li><a href="https://www.facebook.com/strivershub/" target="_blank" rel="noopener noreferrer">Facebook</a></li>
-              <li><a href="https://www.instagram.com/strivers.hub/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-              <li><a href="https://www.youtube.com/@StriversHUB" target="_blank" rel="noopener noreferrer">YouTube</a></li>
-              <li><a href="https://www.linkedin.com/company/the-asia-foundation" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+              {(social ?? SOCIAL).map((s) => (
+                <li key={s.platform + s.url}>
+                  <a href={s.url} target="_blank" rel="noopener noreferrer">
+                    {s.platform}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

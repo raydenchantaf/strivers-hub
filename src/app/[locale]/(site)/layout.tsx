@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { LangProvider } from '@/components/LangProvider';
-import { Footer, PartnerBand } from '@/components/Footer';
+import { Announcement, Footer, PartnerBand } from '@/components/Footer';
+import { getSettings } from '@/lib/settings';
 import { Helper } from '@/components/Helper';
 import { Analytics } from '@/components/Analytics';
 import { IconSprite } from '@/components/Icons';
@@ -28,17 +29,19 @@ export default async function SiteLayout({
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
+  const settings = await getSettings();
 
   return (
     <LangProvider locale={locale}>
       <a className="skip" href="#main">
         Skip to content
       </a>
+      {settings.announcement ? <Announcement a={settings.announcement} /> : null}
       <Nav />
       <IconSprite />
       <main id="main">{children}</main>
-      <PartnerBand />
-      <Footer />
+      <PartnerBand partners={settings.partners} />
+      <Footer blurb={settings.blurb} social={settings.social} />
       <Helper />
       <Analytics />
     </LangProvider>

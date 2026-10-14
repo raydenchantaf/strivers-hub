@@ -43,7 +43,10 @@ type FetchOptions = {
 };
 
 export async function sanityFetch<T>(query: string, opts: FetchOptions = {}): Promise<T> {
+  /* every CMS read also carries `sanity`, so the publish webhook can refresh
+     all of them at once (api/revalidate) - the site is small enough that a
+     targeted refresh would buy nothing */
   return client.fetch<T>(query, opts.params ?? {}, {
-    next: { revalidate: opts.revalidate ?? 3600, tags: opts.tags },
+    next: { revalidate: opts.revalidate ?? 3600, tags: [...(opts.tags ?? []), 'sanity'] },
   });
 }
