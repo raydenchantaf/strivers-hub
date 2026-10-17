@@ -16,11 +16,11 @@ the host for production.
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | yes | `9znzy5bd` |
 | `NEXT_PUBLIC_SANITY_DATASET` | yes | `production` |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | no | Defaults to `2024-10-01` |
-| `SANITY_API_WRITE_TOKEN` | yes for forms | Editor token from sanity.io/manage. Server-side only. |
-| `AUTH_SECRET` | yes for accounts | Session signing key, see below |
+| `SANITY_API_WRITE_TOKEN` | no, seed only | Editor token for `npm run seed`, run once from a developer's machine. Never set on the host. |
+| `AUTH_SECRET` | yes | Session signing key, see below |
 | `NEXT_PUBLIC_SITE_URL` | yes | `https://www.strivershub.com` — used for canonicals, sitemap and Open Graph |
 | `NEXT_PUBLIC_GA_ID` | no | Leave blank and no analytics script is loaded at all |
-| `DATABASE_URL` | for analytics | Postgres (Neon). Holds the first-party analytics table, created on first use. Blank: nothing is recorded. |
+| `DATABASE_URL` | yes | TAF's Neon Postgres: members, assessment results and mentorship sign-ups in the previous platform's tables, plus the site's own analytics, rate-limit and admin-audit tables, created on first use. Production on the live site, a Neon branch on previews. |
 | `INSIGHTS_PASSWORD` | for `/insights` | Password for the team's analytics dashboard. Blank: the dashboard stays closed. |
 | `ADMIN_EMAILS` | for `/admin` | Comma-separated emails of site accounts allowed into the admin area (people data, Excel export, data requests). Blank: nobody can open it. |
 | `REVALIDATE_SECRET` | no | Shared secret for the Sanity webhook |
@@ -49,20 +49,19 @@ Generate the session key with:
 node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 ```
 
-The build works without `SANITY_API_WRITE_TOKEN` — reads are public. Only the
-three write paths need it, and they fail loudly rather than silently if it is
-missing.
+The site never writes to Sanity, so the host needs no Sanity token at all:
+content reads are public, and people data goes to Postgres.
 
 ## Deploying to Vercel
 
 ```bash
 npm i -g vercel
 vercel link
-vercel env add SANITY_API_WRITE_TOKEN production
+vercel env add DATABASE_URL production
 vercel env add AUTH_SECRET production
 vercel env add NEXT_PUBLIC_SITE_URL production
-vercel env add DATABASE_URL production
 vercel env add INSIGHTS_PASSWORD production
+vercel env add ADMIN_EMAILS production
 vercel --prod
 ```
 
@@ -79,14 +78,20 @@ a trans-Pacific round trip to every uncached request.
 This is set in `vercel.json` (`"regions": ["sin1"]`), so it travels with the
 code. Project Settings → Functions shows the same choice.
 
-### Branch builds
+### Previews
 
-`vercel.json` also stops Vercel building the `rebuild` branch
-(`git.deploymentEnabled`). The Vercel project currently serving
-strivershub.com deploys every branch of its repository, and a preview of this
-branch would run against the live site's environment variables, including its
-database. Remove that entry once the project's Preview environment has its
-own `DATABASE_URL` (a Neon branch, never production) and `SITE_NOINDEX=1`.
+`main` is production. Every other branch builds a preview, and previews use
+the project's Preview environment, so set it up before the first push of any
+other branch:
+
+- `DATABASE_URL`: a Neon **branch** of production (for example `staging`),
+  never production itself. Previews are where test accounts and test
+  submissions are made.
+- `SITE_NOINDEX=1`, so a preview never competes with the live site in search.
+- `NEXT_PUBLIC_SITE_URL`: the preview branch's own fixed address
+  (`<project>-git-<branch>-<team>.vercel.app`), so password-reset links in its
+  emails open the preview rather than the live site.
+- A different `AUTH_SECRET` from production's.
 
 ## Sanity
 
@@ -103,13 +108,16 @@ idempotent: running it twice will not duplicate anything. Against the existing
 
 ### CORS
 
-Add the deployment origin in sanity.io/manage → API → CORS origins:
+In sanity.io/manage → API → CORS origins. The project already has
+`https://*.strivershub.com` with credentials, which covers the live site and its
+Studio.
 
-- `https://www.strivershub.com`
-- the Vercel preview domain
-- `http://localhost:3000` for development
+- For the Studio on a preview, add that preview branch's exact address, with
+  credentials. Never add `https://*.vercel.app` with credentials: it would let
+  any site on vercel.app make requests as a signed-in editor.
+- `http://localhost:3000` for development.
 
-Credentials are not required for reads.
+Credentials are not required for the site's own reads.
 
 ### Instant publishing (optional but recommended)
 
@@ -129,15 +137,27 @@ sanity.io/manage → API → Webhooks → Create webhook:
 
 ## DNS cutover
 
-1. Deploy and confirm on the Vercel preview URL.
-2. Add `www.strivershub.com` as a domain in the Vercel project.
-3. Update the DNS record at the registrar to the CNAME Vercel gives you.
-4. Keep the apex redirecting to `www`, as it does now.
+DNS for strivershub.com is on Cloudflare (registrar GoDaddy), with every record
+set to **DNS only**, not proxied. `www` is the canonical host. The apex answers
+with a 308 redirect to it.
 
-TLS is issued automatically. Allow up to an hour for propagation.
+If the domain is attached to a project in another Vercel team, as it was before
+this launch, the move is:
 
-The old deployment can stay running throughout — nothing about this cutover is
-one-way, and reverting is a DNS change.
+1. Deploy production and check it on its `*.vercel.app` address.
+2. Note the current Cloudflare values for `www` (CNAME) and the apex (A), for
+   rolling back.
+3. In this project, add `www.strivershub.com`, then `strivershub.com` set to
+   redirect to `www` (308).
+4. Vercel reports the domain is in use elsewhere and shows a `_vercel` TXT
+   value. Add it in Cloudflare beside the existing TXT records.
+5. Set the `www` CNAME and the apex A records to the values this project shows.
+   Keep them DNS only (grey cloud).
+6. Wait for Valid Configuration and the certificate, usually minutes.
+
+To roll back, add the domains back to the old project and restore the Cloudflare
+values from step 2. Keep the old project untouched until the new site is
+accepted.
 
 ## Caching
 
@@ -152,11 +172,14 @@ one-way, and reverting is a DNS change.
 
 - [ ] `/` and one article load, in both languages
 - [ ] The assessment completes and the result appears
-- [ ] A test submission arrives in Studio → Assessment responses
-- [ ] The mentorship form arrives in Studio → Mentorship interest
+- [ ] A test submission appears in `/admin` → Assessments
+- [ ] A mentorship sign-up appears in `/admin` → Mentorship
+- [ ] Register, sign in, and a password-reset email arrives and its link works
+      (then erase the test account in `/admin` → Data requests)
+- [ ] `/insights` opens with its password
 - [ ] `/sitemap.xml` lists the article URLs
 - [ ] `/studio` loads and your team can log in
-- [ ] `/robots.txt` disallows `/studio`, `/dashboard` and `/api/`
+- [ ] `/robots.txt` disallows `/studio`, `/dashboard`, `/admin`, `/insights` and `/api/`
 - [ ] A mistyped URL — `/ms/nope` — shows the branded 404, not a black Next page
 - [ ] `/` redirects to `/ms`, and `/penilaian` still reaches `/assessment`
 - [ ] `npm run check` passes (typecheck + translation guard)
