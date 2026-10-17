@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { L as Link } from '@/components/L';
 import type { Partner, Settings } from '@/lib/settings';
+import { CookieSettingsLink } from './Consent';
 import { useLang } from './LangProvider';
 
 /* `w`/`h` are each file's own pixels; `width` is how wide it is drawn.
@@ -168,6 +169,7 @@ export function Footer({
           <span className="foot-legal">
             <span>&copy; 2024&ndash;{year} Strivers&#8217; Hub</span>
             <Link href="/privacy-policy">{t('foot.legal')}</Link>
+            <CookieSettingsLink />
           </span>
           {/* the builder's credit: last thing on the page, small, not a link */}
           <span className="foot-by">

@@ -832,6 +832,23 @@ h2.sec-h .serif-i{font-weight:400;color:var(--magenta);font-size:1.08em;letter-s
   font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,246,241,.55);
 }
 .foot-by img{width:74px;height:auto;opacity:.8}
+.foot-ck{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;transition:color .2s}
+.foot-ck:hover{color:#fff}
+
+/* cookie choice for Google Analytics: bottom left, clear of the helper on the
+   right. On a phone it spans the width and sits over the helper until answered. */
+.ck{
+  position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));
+  z-index:66;width:min(400px,calc(100vw - 32px));
+  background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:18px;
+  box-shadow:var(--shadow-l);padding:18px 18px 16px;font-size:14px;line-height:1.55;
+  animation:ck-in .4s var(--ease-out) both;
+}
+.ck p{margin:0 0 12px}
+.ck p a{color:var(--plum);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.ck-acts{display:flex;gap:10px;flex-wrap:wrap}
+@keyframes ck-in{from{opacity:0;transform:translateY(12px)}}
+@media (prefers-reduced-motion:reduce){.ck{animation:none}}
 
 /* ============ ASSESSMENT PAGE ============ */
 .as-hero{padding:clamp(44px,6vw,84px) 0 0}

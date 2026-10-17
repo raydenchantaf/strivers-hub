@@ -145,6 +145,14 @@ export const dict: Record<string, Localised> = {
   "foot.l1": { en: "Self-Assessment", bm: "Penilaian Kendiri" },
   "foot.legal": { en: "Privacy Policy", bm: "Dasar Privasi" },
 
+  /* ---------- ck (cookie choice for Google Analytics) ---------- */
+  "ck.label": { en: "Cookie choice", bm: "Pilihan kuki" },
+  "ck.text": { en: "May we use Google Analytics cookies to see how the site is used, so we can improve it? Everything works the same if you say no.", bm: "Bolehkah kami menggunakan kuki Google Analytics untuk melihat cara laman ini digunakan supaya kami dapat menambah baiknya? Semuanya berfungsi seperti biasa jika anda menolak." },
+  "ck.more": { en: "Privacy Policy", bm: "Dasar Privasi" },
+  "ck.yes": { en: "Accept", bm: "Terima" },
+  "ck.no": { en: "No thanks", bm: "Tidak, terima kasih" },
+  "ck.settings": { en: "Cookie settings", bm: "Tetapan kuki" },
+
   /* ---------- fp ---------- */
   "fp.eyebrow": { en: "Financing & funding", bm: "Pembiayaan & pendanaan" },
   "fp.h1": { en: "Capital for <span class=\"serif-i\">the next step</span>", bm: "Modal untuk <span class=\"serif-i\">langkah seterusnya</span>" },

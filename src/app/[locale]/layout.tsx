@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
-import Script from 'next/script';
 import { notFound } from 'next/navigation';
+import { GoogleAnalytics } from '@/components/Consent';
 import { HTML_LANG, LOCALES, LOCALE_TO_LANG, isLocale } from '@/lib/i18n/types';
 import '../globals.css';
 
@@ -92,20 +92,8 @@ export default async function RootLayout({
     >
       <body>
         {children}
-        {ga ? (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}
-              strategy="afterInteractive"
-            />
-            {/* not inside a frame: the heatmap on /insights previews pages in one,
-                and those previews are not visits */}
-            <Script id="ga" strategy="afterInteractive">
-              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
-gtag('js',new Date());if(window.top===window.self){gtag('config','${ga}',{anonymize_ip:true});}`}
-            </Script>
-          </>
-        ) : null}
+        {/* loads at once, or only after a yes when the cookie notice is on */}
+        {ga ? <GoogleAnalytics id={ga} /> : null}
       </body>
     </html>
   );

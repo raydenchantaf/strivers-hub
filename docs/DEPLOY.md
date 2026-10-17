@@ -20,6 +20,7 @@ the host for production.
 | `AUTH_SECRET` | yes | Session signing key, see below |
 | `NEXT_PUBLIC_SITE_URL` | yes | `https://www.strivershub.com` — used for canonicals, sitemap and Open Graph |
 | `NEXT_PUBLIC_GA_ID` | no | Leave blank and no analytics script is loaded at all |
+| `NEXT_PUBLIC_COOKIE_NOTICE` | no | `1` asks visitors before Google Analytics sets cookies, with "Cookie settings" in the footer. Blank: GA loads without asking. Takes effect on the next deploy. |
 | `DATABASE_URL` | yes | TAF's Neon Postgres: members, assessment results and mentorship sign-ups in the previous platform's tables, plus the site's own analytics, rate-limit and admin-audit tables, created on first use. Production on the live site, a Neon branch on previews. |
 | `INSIGHTS_PASSWORD` | for `/insights` | Password for the team's analytics dashboard. Blank: the dashboard stays closed. |
 | `ADMIN_EMAILS` | for `/admin` | Comma-separated emails of site accounts allowed into the admin area (people data, Excel export, data requests). Blank: nobody can open it. |

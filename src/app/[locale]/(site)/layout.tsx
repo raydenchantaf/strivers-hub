@@ -4,6 +4,7 @@ import { Announcement, Footer, PartnerBand } from '@/components/Footer';
 import { getSettings } from '@/lib/settings';
 import { Helper } from '@/components/Helper';
 import { Analytics } from '@/components/Analytics';
+import { CookieNotice } from '@/components/Consent';
 import { IconSprite } from '@/components/Icons';
 import { Nav } from '@/components/Nav';
 import { isLocale } from '@/lib/i18n/types';
@@ -43,6 +44,7 @@ export default async function SiteLayout({
       <PartnerBand partners={settings.partners} />
       <Footer blurb={settings.blurb} social={settings.social} />
       <Helper />
+      <CookieNotice />
       <Analytics />
     </LangProvider>
   );
