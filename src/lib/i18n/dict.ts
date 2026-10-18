@@ -249,6 +249,8 @@ export const dict: Record<string, Localised> = {
   "nav.about": { en: "About Us", bm: "Tentang Kami" },
   "nav.login": { en: "Log In", bm: "Log Masuk" },
   "nav.join": { en: "Join Us", bm: "Sertai Kami" },
+  "nav.hi": { en: "Hi,", bm: "Hai," },
+  "nav.me": { en: "My dashboard", bm: "Papan pemuka saya" },
   "nav.lang": { en: "Language", bm: "Bahasa" },
 
   /* ---------- part ---------- */

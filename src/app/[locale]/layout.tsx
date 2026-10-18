@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { GoogleAnalytics } from '@/components/Consent';
+import { HINT_SCRIPT } from '@/lib/auth/client';
 import { HTML_LANG, LOCALES, LOCALE_TO_LANG, isLocale } from '@/lib/i18n/types';
 import '../globals.css';
 
@@ -89,8 +90,12 @@ export default async function RootLayout({
     <html
       lang={HTML_LANG[LOCALE_TO_LANG[locale]]}
       className={`${sans.variable} ${serif.variable}`}
+      /* the hint script below may add data-auth before React hydrates */
+      suppressHydrationWarning
     >
       <body>
+        {/* first thing in the body, so the header is drawn in the right state */}
+        <script dangerouslySetInnerHTML={{ __html: HINT_SCRIPT }} />
         {children}
         {/* loads at once, or only after a yes when the cookie notice is on */}
         {ga ? <GoogleAnalytics id={ga} /> : null}

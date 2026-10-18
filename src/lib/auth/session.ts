@@ -5,6 +5,13 @@ import { cookies } from 'next/headers';
 const COOKIE = 'sh_session';
 const MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
+/* A second cookie, readable by the page, that says only that someone is
+   signed in: no name, no id. The header is built once for everyone, so this
+   is how it can show "Log out" and the member's name from the first paint
+   instead of "Log In" and "Join Us". The session itself stays httpOnly, and
+   the name is fetched from /api/auth/me. */
+export const SIGNED_IN_HINT = 'sh_in';
+
 export type Session = { sub: string; email: string; name: string };
 
 function key(): Uint8Array {
@@ -33,6 +40,13 @@ export async function createSession(session: Session): Promise<void> {
     path: '/',
     maxAge: MAX_AGE,
   });
+  store.set(SIGNED_IN_HINT, '1', {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: MAX_AGE,
+  });
 }
 
 export async function readSession(): Promise<Session | null> {
@@ -50,4 +64,5 @@ export async function readSession(): Promise<Session | null> {
 export async function clearSession(): Promise<void> {
   const store = await cookies();
   store.delete(COOKIE);
+  store.delete(SIGNED_IN_HINT);
 }

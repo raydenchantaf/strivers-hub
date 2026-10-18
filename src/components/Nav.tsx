@@ -3,8 +3,9 @@
 import Image from 'next/image';
 import { L as Link } from '@/components/L';
 import NextLink from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { AUTH_CHANGED, authChanged, signedInHint } from '@/lib/auth/client';
 import { dict } from '@/lib/i18n/dict';
 import { HTML_LANG, LANGS, LANG_TO_LOCALE, swapLocale, type Lang } from '@/lib/i18n/types';
 import { useLang } from './LangProvider';
@@ -67,10 +68,89 @@ function Lock({ k }: { k: string }) {
   );
 }
 
-export function Nav() {
-  const { t } = useLang();
+const NAME_KEY = 'sh_me';
+
+/**
+ * The signed-in member, for the header: their name once known, else null.
+ *
+ * Whether to show the member's controls at all is decided before paint, by
+ * the hint script and CSS on `html[data-auth]`, so nothing flashes. This only
+ * fills in the name (kept for the tab in sessionStorage, so later pages don't
+ * wait for it), and re-checks after every navigation, since signing in and
+ * out both end in one, and whenever a form signs someone in or out in place.
+ */
+function useMember() {
   const pathname = usePathname();
+  const [name, setName] = useState<string | null>(null);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const bump = () => setTick((n) => n + 1);
+    window.addEventListener(AUTH_CHANGED, bump);
+    return () => window.removeEventListener(AUTH_CHANGED, bump);
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const forget = () => {
+      root.removeAttribute('data-auth');
+      setName(null);
+      try {
+        sessionStorage.removeItem(NAME_KEY);
+      } catch {
+        /* storage blocked: nothing to forget */
+      }
+    };
+    if (!signedInHint()) return forget();
+
+    root.setAttribute('data-auth', 'in');
+    try {
+      const kept = sessionStorage.getItem(NAME_KEY);
+      if (kept) setName(kept);
+    } catch {
+      /* storage blocked: wait for the request */
+    }
+    let gone = false;
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((me: { signedIn: boolean; name?: string }) => {
+        if (gone) return;
+        if (!me.signedIn) return forget();
+        const n = me.name ?? '';
+        setName(n);
+        try {
+          sessionStorage.setItem(NAME_KEY, n);
+        } catch {
+          /* fine */
+        }
+      })
+      .catch(() => {
+        /* offline: keep what is shown */
+      });
+    return () => {
+      gone = true;
+    };
+  }, [pathname, tick]);
+
+  return name;
+}
+
+export function Nav() {
+  const { t, lang } = useLang();
+  const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const member = useMember();
+  const first = member?.trim().split(/\s+/)[0] ?? '';
+  /* until the name arrives, the button says where it goes */
+  const hello = first ? `${t('nav.hi')} ${first}` : t('nav.me');
+
+  async function logout() {
+    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => null);
+    authChanged();
+    router.push(`/${LANG_TO_LOCALE[lang]}`);
+    router.refresh();
+  }
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -107,12 +187,31 @@ export function Nav() {
 
           <div className="nav-right">
             <LangSwitch />
-            <Link className="btn btn-ghost btn-sm nav-login" href="/login">
-              <Lock k="nav.login" />
-            </Link>
-            <Link className="btn btn-solid btn-sm nav-cta" href="/register">
-              <Lock k="nav.join" />
-            </Link>
+            {/* Each slot holds the signed-out and the signed-in button in one
+                grid cell, so switching between them moves nothing. The name
+                button takes the width of Join Us and trims a long name with
+                an ellipsis rather than widening the slot. */}
+            <span className="nslot nav-login">
+              <Link className="btn btn-ghost btn-sm g-only" href="/login">
+                <Lock k="nav.login" />
+              </Link>
+              <button className="btn btn-ghost btn-sm m-only" type="button" onClick={logout}>
+                <Lock k="db.logout" />
+              </button>
+            </span>
+            <span className="nslot nav-cta">
+              <Link className="btn btn-solid btn-sm g-only" href="/register">
+                <Lock k="nav.join" />
+              </Link>
+              <Link
+                className="btn btn-solid btn-sm m-only nav-me"
+                href="/dashboard"
+                title={t('nav.me')}
+                aria-label={member ? `${t('nav.me')}: ${member}` : t('nav.me')}
+              >
+                <span className="nav-me-t">{hello}</span>
+              </Link>
+            </span>
             <button
               className="burger"
               type="button"
@@ -165,12 +264,18 @@ export function Nav() {
         </div>
         <div className="msep" />
         <div className="mfoot">
-          <Link className="btn btn-ghost" href="/login">
+          <Link className="btn btn-ghost mg" href="/login">
             {t('nav.login')}
           </Link>
-          <Link className="btn btn-solid" href="/register">
+          <Link className="btn btn-solid mg" href="/register">
             {t('nav.join')}
           </Link>
+          <Link className="btn btn-solid mm" href="/dashboard">
+            {first ? `${t('nav.hi')} ${first}` : t('db.eyebrow')}
+          </Link>
+          <button className="btn btn-ghost mm" type="button" onClick={logout}>
+            {t('db.logout')}
+          </button>
         </div>
       </div>
     </>

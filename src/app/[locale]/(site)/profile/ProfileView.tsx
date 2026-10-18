@@ -3,6 +3,7 @@
 import { L as Link } from '@/components/L';
 import { useState } from 'react';
 import { HeaderField } from '@/components/HeaderField';
+import { authChanged } from '@/lib/auth/client';
 import { useLang } from '@/components/LangProvider';
 import { formatDate } from '@/lib/content-format';
 
@@ -53,6 +54,8 @@ export function ProfileView({ data }: { data: ProfileData }) {
       const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (json.ok) {
         setDeleted(true);
+        /* the page stays put, so tell the header the member has gone */
+        authChanged();
         window.scrollTo({ top: 0 });
         return;
       }
