@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { alternates, localeOf } from '@/lib/i18n/routing';
 import { AssessmentView } from './AssessmentView';
 import { getBands } from '@/lib/assessment/grades';
+import { recommendedByStage } from '@/lib/recommend';
 
 export const revalidate = 3600;
 
@@ -20,5 +21,9 @@ export async function generateMetadata({
 }
 
 export default async function Page() {
-  return <AssessmentView bands={await getBands()} />;
+  const bands = await getBands();
+  /* all three stages' picks travel with the page, which stays static; the
+     result screen shows the ones for the stage the visitor lands on */
+  const recommended = await recommendedByStage(bands.map((b) => b.key.en));
+  return <AssessmentView bands={bands} recommended={recommended} />;
 }

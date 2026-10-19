@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { ResultsView } from './ResultsView';
 import { readSession } from '@/lib/auth/session';
 import { latestResult } from '@/lib/submissions';
-import { getAllArticles, toView } from '@/lib/content';
+import { recommendedFor } from '@/lib/recommend';
 import { bandOf, MAX_SCORE } from '@/lib/assessment/scoring';
 import { getBands } from '@/lib/assessment/grades';
 
@@ -65,27 +65,14 @@ export default async function Page() {
 
   const list = await getBands();
   const band = bandOf(score, list);
-  const wanted: Record<string, string[]> = {
-    Aspiring: ['Digital Skills', 'Digital Presence', 'Business Growth', 'Legal'],
-    Managing: ['Operations & Productivity', 'Marketing & Branding', 'Customer Retention', 'Finance'],
-    Growing: ['Strategic Growth', 'Partnership', 'ESG', 'Networking'],
-  };
-  const preferred = wanted[band.key.en] ?? [];
-  const ranked = (await getAllArticles())
-    .filter((a) => a.kind === 'resource')
-    .sort((a, b) => {
-      const sa = a.categories.filter((c) => preferred.includes(c.en)).length;
-      const sb = b.categories.filter((c) => preferred.includes(c.en)).length;
-      if (sa !== sb) return sb - sa;
-      return (b.publishedAt || '').localeCompare(a.publishedAt || '');
-    });
+  const recommended = await recommendedFor(band.key.en, 3);
 
   return (
     <ResultsView
       band={band}
       score={score}
       takenAt={takenAt}
-      recommended={ranked.slice(0, 3).map(toView)}
+      recommended={recommended}
     />
   );
 }

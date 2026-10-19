@@ -5,6 +5,7 @@ import { useLang } from '@/components/LangProvider';
 import { Reveal } from '@/components/Reveal';
 import { AssessLoader } from '@/components/assessment/AssessLoader';
 import { AssessmentTool } from '@/components/assessment/AssessmentTool';
+import type { CardView } from '@/lib/content-format';
 import type { Band } from '@/lib/assessment/types';
 
 const FACTS = [
@@ -21,7 +22,13 @@ const OUTCOMES = [
   { n: 3, cls: '', colour: 'var(--saffron)', ink: 'var(--saffron-ink)' },
 ];
 
-export function AssessmentView({ bands }: { bands: Band[] }) {
+export function AssessmentView({
+  bands,
+  recommended,
+}: {
+  bands: Band[];
+  recommended?: Record<string, CardView[]>;
+}) {
   const { t } = useLang();
   return (
     <>
@@ -62,7 +69,7 @@ export function AssessmentView({ bands }: { bands: Band[] }) {
           </div>
 
           <div className="ld ld-3">
-            <AssessmentTool bands={bands} />
+            <AssessmentTool bands={bands} recommended={recommended} />
           </div>
         </div>
       </div>

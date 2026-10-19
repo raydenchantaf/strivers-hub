@@ -71,13 +71,13 @@ export function ResultsView({
       <section className="band" style={{ paddingTop: 0 }}>
         <div className="shell">
           <div className="qpanel" style={{ maxWidth: 760, marginInline: 'auto' }}>
-            <ResultView band={band} score={score} />
+            <ResultView band={band} score={score} ctaHref={recommended.length ? '#recommended' : '/resources'} />
           </div>
         </div>
       </section>
 
       {recommended.length ? (
-        <section className="band band-shell" style={{ paddingTop: 'clamp(44px,5vw,70px)' }}>
+        <section id="recommended" className="band band-shell" style={{ paddingTop: 'clamp(44px,5vw,70px)' }}>
           <div className="shell">
             <Reveal className="sec-head mid">
               <span className="eyebrow">{t('rs.recEyebrow')}</span>

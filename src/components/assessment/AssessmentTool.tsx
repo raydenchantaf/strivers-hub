@@ -17,6 +17,7 @@ import { SaveResultDialog } from './SaveResultDialog';
 import { ProgressRing } from './ProgressRing';
 import { QuestionView } from './QuestionView';
 import { ResultView } from './ResultView';
+import type { CardView } from '@/lib/content-format';
 import { track } from '@/lib/analytics/client';
 
 const PROGRESS_KEY = 'sh_progress';
@@ -83,7 +84,14 @@ function useFlowHeight() {
   return { inner, box };
 }
 
-export function AssessmentTool({ bands }: { bands: Band[] }) {
+export function AssessmentTool({
+  bands,
+  recommended,
+}: {
+  bands: Band[];
+  /** Articles per stage, by the stage's English name. */
+  recommended?: Record<string, CardView[]>;
+}) {
   const { t, lang } = useLang();
   const panelRef = useRef<HTMLDivElement>(null);
   const flow = useFlowHeight();
@@ -419,6 +427,7 @@ export function AssessmentTool({ bands }: { bands: Band[] }) {
             score={result.score}
             takenAt={takenAt}
             onRetake={retake}
+            recommended={recommended?.[bands[result.bandIndex].key.en]}
             save={
               /* Already attached - the visitor was signed in when they
                  submitted - so there is nothing to offer. */

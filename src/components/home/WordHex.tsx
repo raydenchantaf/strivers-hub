@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useLang } from '../LangProvider';
 import { Reveal } from '../Reveal';
 import { HEX, HEX_ROWS, HEX_ROWS_S, type HexRow, type HexSeg } from './hexlayout';
+import { WORDS_EN } from './words';
 import { track } from '@/lib/analytics/client';
 
 /**
@@ -59,6 +60,7 @@ const MID = (HEX.rows - 1) / 2;
 const px = (n: number) => `calc(${n} * var(--px))`;
 
 function Seg({ seg, side }: { seg: HexSeg; side: 's' | 'l' | 'r' }) {
+  const { lang } = useLang();
   return (
     <span className="hxs" data-side={side} style={{ width: px(seg.w) }}>
       {seg.words.map((word, i) => (
@@ -66,8 +68,10 @@ function Seg({ seg, side }: { seg: HexSeg; side: 's' | 'l' | 'r' }) {
           key={`${word.t}-${i}`}
           className={`w t${word.k}`}
           style={{ ['--c' as string]: word.c }}
+          /* the Malay word is the key analytics counts, in either language */
+          data-w={word.t}
         >
-          {word.t}
+          {lang === 'en' ? (WORDS_EN[word.t] ?? word.t) : word.t}
         </span>
       ))}
     </span>
@@ -191,7 +195,7 @@ export function WordHex() {
       over = w;
       if (!w) return;
       timer = window.setTimeout(() => {
-        const word = (w.textContent ?? '').trim();
+        const word = (w.dataset.w ?? w.textContent ?? '').trim();
         if (!word || counted.has(word)) return;
         counted.add(word);
         track('field', { src: 'field', w: word });

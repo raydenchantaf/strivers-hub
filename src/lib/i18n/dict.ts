@@ -74,6 +74,8 @@ export const dict: Record<string, Localised> = {
   "as.done.sect": { en: "Complete", bm: "Selesai" },
   "as.done.step": { en: "Assessment complete", bm: "Penilaian lengkap" },
   "as.result.cta": { en: "See your recommended resources", bm: "Lihat sumber yang disyorkan" },
+  "as.result.recH": { en: "Recommended for your stage", bm: "Disyorkan untuk tahap anda" },
+  "as.result.all": { en: "Browse all resources", bm: "Lihat semua sumber" },
   "as.result.saved": {
     en: "Your saved result, from {d}",
     bm: "Keputusan tersimpan anda, dari {d}",
