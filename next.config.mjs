@@ -15,7 +15,20 @@ const dev = process.env.NODE_ENV !== 'production';
  * Development adds what `next dev` needs: eval for fast refresh, and the
  * websocket for hot reload.
  */
-const GA = ['https://www.googletagmanager.com', 'https://*.google-analytics.com', 'https://*.analytics.google.com'];
+/* Google's documented list for GA4 with Google signals on. The bare
+   analytics.google.com is listed separately because a wildcard does not cover
+   it, and that is where GA4 now sends hits; doubleclick and google.com carry
+   the signals requests. Missing either, the tag loads but every hit is blocked. */
+const GA = [
+  'https://www.googletagmanager.com',
+  'https://*.googletagmanager.com',
+  'https://*.google-analytics.com',
+  'https://analytics.google.com',
+  'https://*.analytics.google.com',
+  'https://*.g.doubleclick.net',
+  'https://*.google.com',
+  'https://*.google.com.my',
+];
 
 const SITE_CSP = [
   `default-src 'self'`,
