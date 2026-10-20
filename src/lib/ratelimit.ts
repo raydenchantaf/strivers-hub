@@ -113,14 +113,15 @@ export async function clear(rule: Rule, value: string): Promise<void> {
 }
 
 /**
- * The visitor's address, for per-connection limits. Vercel sets
- * `x-real-ip` and `x-forwarded-for` itself; Cloudflare, when it proxies,
- * sets `cf-connecting-ip`. A spoofed header can only dodge the per-connection
- * limits, never the per-account ones, which are what protect a password.
+ * The visitor's address, for per-connection limits. Only headers Vercel sets
+ * itself are read, because Vercel overwrites whatever a client sends in them.
+ * strivershub.com is not proxied by Cloudflare (DNS only), so a
+ * `cf-connecting-ip` header could only have come from the client, and trusting
+ * it let a script give itself a new address on every request.
  */
 export function clientIp(request: Request): string {
   return (
-    request.headers.get('cf-connecting-ip') ||
+    request.headers.get('x-vercel-forwarded-for')?.split(',')[0].trim() ||
     request.headers.get('x-real-ip') ||
     (request.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ||
     'unknown'

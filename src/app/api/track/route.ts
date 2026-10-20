@@ -62,7 +62,10 @@ export async function POST(request: Request) {
   if (!events.length) return new NextResponse(null, { status: 204 });
 
   const ip =
-    request.headers.get('cf-connecting-ip') ||
+    /* only the headers Vercel sets itself: a client-sent cf-connecting-ip
+       (the site is not behind Cloudflare's proxy) would let one browser pose
+       as many visitors */
+    request.headers.get('x-vercel-forwarded-for')?.split(',')[0].trim() ||
     request.headers.get('x-real-ip') ||
     (request.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ||
     'unknown';
