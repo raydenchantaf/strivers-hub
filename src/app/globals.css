@@ -788,6 +788,19 @@ h2.sec-h .serif-i{font-weight:400;color:var(--magenta);font-size:1.08em;letter-s
   border:6px solid transparent;border-top-color:#fff;
 }
 .partners a:hover .pt-tip,.partners a:focus-visible .pt-tip{opacity:1;transform:translate(-50%,0)}
+/* Centred, the bubble on an outer logo runs past the screen edge once the band
+   is narrow (23px at 768px wide). There, the outer bubbles hang inwards. */
+@media(max-width:1100px){
+  .partners a:last-child .pt-tip{left:auto;right:0;transform:translate(0,6px)}
+  .partners a:last-child:hover .pt-tip,.partners a:last-child:focus-visible .pt-tip{transform:translate(0,0)}
+  .partners a:last-child .pt-tip::after{left:auto;right:22px;margin-left:0}
+  .partners a:first-child .pt-tip{left:0;transform:translate(0,6px)}
+  .partners a:first-child:hover .pt-tip,.partners a:first-child:focus-visible .pt-tip{transform:translate(0,0)}
+  .partners a:first-child .pt-tip::after{left:22px;margin-left:0}
+}
+/* narrower still, the logos wrap and the longest name sits at a row's edge:
+   let the bubble take two lines instead of running off the side */
+@media(max-width:760px){.pt-tip{white-space:normal;width:max-content;max-width:220px;text-align:center}}
 @media(hover:none){.pt-tip{display:none}}
 @media(prefers-reduced-motion:reduce){.pt-tip{transition:none}}
 
