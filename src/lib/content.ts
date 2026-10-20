@@ -91,7 +91,9 @@ export async function getAllSlugs(): Promise<
   const rows = await sanityFetch<
     { slug: string; categories: (string | null)[] | null; _updatedAt: string }[]
   >(ALL_SLUGS, { tags: ['resource'] });
-  // the slug query returns raw category values, so map them back to names
+  /* the slug query returns each category's English title, which is what kindOf
+     matches on. It used to return the category key, which never matched, so
+     every event and financing article was listed under /resources and 404'd. */
   return rows.map((r) => ({
     slug: r.slug,
     kind: kindOf(((r.categories ?? []).filter(Boolean) as string[]).map((v) => ({

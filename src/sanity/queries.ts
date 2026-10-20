@@ -56,7 +56,7 @@ export const RELATED_RESOURCES = groq`
 export const ALL_SLUGS = groq`
   *[_type == "resource" && defined(slug.current)]{
     "slug": slug.current,
-    "categories": category[]->value,
+    "categories": category[]->title_en,
     _updatedAt
   }
 `;
