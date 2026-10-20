@@ -21,7 +21,7 @@ That is the whole blocking list. Items 1 and 2 take about five minutes each.
 
 | # | What we need | Notes |
 |---|---|---|
-| 5 | **Google Analytics property ID** | Optional. Leave it blank and no analytics script loads at all. The existing property is `G-FDETDMMXJ5`; say the word and we carry it over so history is continuous. |
+| 5 | **Google Analytics property ID** | Optional. Leave it blank and no analytics script loads at all. The existing property is `G-2NDNHCZ1DB`; say the word and we carry it over so history is continuous. |
 | 6 | **Final privacy policy text** | The page renders from the CMS. We have loaded the current structure so the page is never blank, but the definitive wording is yours — see §4 below. |
 | 7 | **Social media URLs** | The footer currently points at the handles we could find. Confirm or correct them. |
 | 8 | **Partner logo files** | We are using the versions from the live site. If you have higher-resolution or updated marks, send them. |
