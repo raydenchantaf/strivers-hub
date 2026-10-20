@@ -31,6 +31,15 @@ export const structure: StructureResolver = (S) =>
             .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }]),
         ),
 
+      /* dated events - start, venue, format, registration link - which the
+         Events page lists as upcoming and past ahead of event write-ups */
+      S.listItem()
+        .title('Event listings')
+        .child(
+          S.documentTypeList('event')
+            .title('Event listings')
+            .defaultOrdering([{ field: 'startAt', direction: 'desc' }]),
+        ),
       S.listItem()
         .title('Financing')
         .child(
@@ -57,6 +66,9 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
+      S.listItem()
+        .title('Pages')
+        .child(S.documentTypeList('page').title('Pages')),
       S.listItem()
         .title('Legal pages')
         .child(S.documentTypeList('legalPage').title('Legal pages')),
